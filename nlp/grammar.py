@@ -11,15 +11,11 @@
 
 import re
 
-class NonTerminal(object):
-    pass
-
 class Production(object):
 
     def __init__(self, lhs, rhs):
         self._lhs = lhs
-        self._rhs = rhs
-        self._hash = hash((self._lhs, self._rhs))
+        self._rhs = tuple(rhs)
 
     def lhs(self):
         """ Return the left hand side of this ```production```
@@ -36,6 +32,13 @@ class Production(object):
             sequence
         """
         return self._rhs
+
+    def __str__(self):
+        """ Returns a representation of this ``Production``as a string
+        """
+        string = "%s -> " % self._lhs
+        string += " ".join(el for el in self._rhs)
+        return string
 
     def __eq__(self, other):
         """
@@ -56,14 +59,34 @@ class Production(object):
         """ Parse a grammar rule, given as a string
             and returns a list of production
         """
-        # TODO:
         pos = 0
-        lhs = _STANDARD_NONTERM_RE.match(line)
-        rhses = []
+        m = _STANDARD_NONTERM_RE.match(line)
+        # TODO: the strip() is not elegant, fix if possible
+        lhs, pos = m.group().strip(), m.end()
+
+        # Skip over the arrow
+        m = _ARROW_RE.match(line, pos)
+        pos = m.end()
+
+        rhsides = [[]]
+
         while pos < len(line):
-            pos += 1
-            rhses += "N"
-        return [Production(lhs, rhs) for rhs in rhses]
+            # Terminal
+            if line[pos] in "\'\"":
+                # TODO: handle terminals
+                pass
+            # Vertical bar - start new rhside
+            if line[pos] == '|':
+                m = _DISJUNCTION_RE.match(line, pos)
+                rhsides.append([])
+                pos = m.end()
+            # Non-terminal
+            else:
+                m = _STANDARD_NONTERM_RE.match(line, pos)
+                pos = m.end()
+                # TODO: the strip() is not elegant, fix if possible
+                rhsides[-1].append(m.group().strip())
+        return [Production(lhs, rhs) for rhs in rhsides]
 
 class Grammar(object):
 
@@ -106,11 +129,7 @@ class Grammar(object):
 ### Helpers ###
 ###############
 
-_STANDARD_NONTERM_RE = re.compile('( [\w/][\w/^<>-]* ) \s*', re.VERBOSE)
-_ARROW_RE = re.compile("->", re.VERBOSE)
 
-# def standard_nonterm_parser(string, pos):
-#     m = _STANDARD_NONTERM_RE.match(string, pos)
-#     if not m: raise ValueError('Expected a nonterminal, found: '
-#                                + string[pos:])
-#     return (Nonterminal(m.group(1)), m.end())
+_STANDARD_NONTERM_RE = re.compile('([\w][\w]*) \s*', re.VERBOSE)
+_ARROW_RE = re.compile('\s* -> \s*', re.VERBOSE)
+_DISJUNCTION_RE = re.compile('\| \s*', re.VERBOSE)

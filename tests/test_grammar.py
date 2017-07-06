@@ -11,23 +11,49 @@ from nlp.grammar import Production, Grammar
 class TestProduction(unittest.TestCase):
 
     def setUp(self):
-        self.production = Production("foo", "bar")
+        # TODO: create an array of productions for testing
+        self.lhs = "S"
+        self.rhs = ["NP", "VP"]
+        self.production = Production(self.lhs, self.rhs)
 
     def test_lhs(self):
-        self.assertEqual("foo", self.production.lhs())
+        res = self.lhs
+        self.assertEqual(res, self.production.lhs())
 
     def test_rhs(self):
-        self.assertEqual("bar", self.production.rhs())
+        res = ("NP", "VP")
+        self.assertEqual(res, self.production.rhs())
 
-    def test_parse_production(self):
-        line = "NP -> N | D N | Adj N | D Adj N"
+    def test_str(self):
+        #TODO: handle terminals
+        res = "S -> NP VP"
+        self.assertEqual(res, str(self.production))
+
+    # def test_parse_production(self):
+    #     #TODO:
+    #     pass
+    #     line = "NP -> N | D N | Adj N | D Adj N"
+    #     res = [
+    #         Production("NP", "N"),
+    #         Production("NP", "D N"),
+    #         Production("NP", "Adj N"),
+    #         Production("NP", "D Adj N")
+    #     ]
+    #     self.assertEqual(Production._parse_production(line), res)
+
+class TestParseProduction(unittest.TestCase):
+
+    def setUp(self):
+        self.line = "NP -> N | D N | Adj N | D Adj N"
+
+    def test_parse(self):
         res = [
-            Production("NP", "N"),
-            Production("NP", "D N"),
-            Production("NP", "Adj N"),
-            Production("NP", "D Adj N")
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"]),
+            Production("NP", ["Adj", "N"]),
+            Production("NP", ["D", "Adj", "N"])
         ]
-        self.assertEqual(Production._parse_production(line), res)
+        self.assertCountEqual(res, Production._parse_production(self.line))
 
 
 class TestParseGrammar(unittest.TestCase):
