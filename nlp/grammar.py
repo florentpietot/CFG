@@ -34,11 +34,16 @@ class Production(object):
         return self._rhs
 
     def __str__(self):
-        """ Returns a representation of this ``Production``as a string
+        """ Return a representation of this ``Production``as a string
         """
         string = "%s -> " % self._lhs
         string += " ".join(el for el in self._rhs)
         return string
+
+    def __repr__(self):
+        """ Return a basic representation of this ``Production``as a string
+        """
+        return "%s" % self
 
     def __eq__(self, other):
         """
@@ -60,9 +65,11 @@ class Production(object):
             and returns a list of production
         """
         pos = 0
-        m = _STANDARD_NONTERM_RE.match(line)
+        line = line.strip()
+        m = _NONTERMINAL_RE.match(line)
         # TODO: the strip() is not elegant, fix if possible
         lhs, pos = m.group().strip(), m.end()
+        line = line.strip()
 
         # Skip over the arrow
         m = _ARROW_RE.match(line, pos)
@@ -73,16 +80,18 @@ class Production(object):
         while pos < len(line):
             # Terminal
             if line[pos] in "\'\"":
-                # TODO: handle terminals
-                pass
+                m = _TERMINAL_RE.match(line, pos)
+                pos = m.end()
+                # TODO: the strip() is not elegant, fix if possible
+                rhsides[-1].append(m.group().strip())
             # Vertical bar - start new rhside
-            if line[pos] == '|':
+            elif line[pos] == '|':
                 m = _DISJUNCTION_RE.match(line, pos)
                 rhsides.append([])
                 pos = m.end()
             # Non-terminal
             else:
-                m = _STANDARD_NONTERM_RE.match(line, pos)
+                m = _NONTERMINAL_RE.match(line, pos)
                 pos = m.end()
                 # TODO: the strip() is not elegant, fix if possible
                 rhsides[-1].append(m.group().strip())
@@ -130,6 +139,7 @@ class Grammar(object):
 ###############
 
 
-_STANDARD_NONTERM_RE = re.compile('([\w][\w]*) \s*', re.VERBOSE)
-_ARROW_RE = re.compile('\s* -> \s*', re.VERBOSE)
-_DISJUNCTION_RE = re.compile('\| \s*', re.VERBOSE)
+_NONTERMINAL_RE = re.compile(r'([\w][\w]*) \s*', re.VERBOSE)
+_ARROW_RE = re.compile(r'\s* -> \s*', re.VERBOSE)
+_DISJUNCTION_RE = re.compile(r'\| \s*', re.VERBOSE)
+_TERMINAL_RE = re.compile(r'(\'\w+\') \s*', re.VERBOSE)

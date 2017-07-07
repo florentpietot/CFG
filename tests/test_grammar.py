@@ -29,32 +29,29 @@ class TestProduction(unittest.TestCase):
         res = "S -> NP VP"
         self.assertEqual(res, str(self.production))
 
-    # def test_parse_production(self):
-    #     #TODO:
-    #     pass
-    #     line = "NP -> N | D N | Adj N | D Adj N"
-    #     res = [
-    #         Production("NP", "N"),
-    #         Production("NP", "D N"),
-    #         Production("NP", "Adj N"),
-    #         Production("NP", "D Adj N")
-    #     ]
-    #     self.assertEqual(Production._parse_production(line), res)
-
 class TestParseProduction(unittest.TestCase):
 
     def setUp(self):
-        self.line = "NP -> N | D N | Adj N | D Adj N"
+        self.lines = []
+        self.lines.append("NP -> N | D N | Adj N | D Adj N")
+        self.lines.append("N -> 'foo' | 'bar'")
 
     def test_parse(self):
+        self.res = []
         res = [
             Production("NP", ["N"]),
             Production("NP", ["D", "N"]),
             Production("NP", ["Adj", "N"]),
             Production("NP", ["D", "Adj", "N"])
         ]
-        self.assertCountEqual(res, Production._parse_production(self.line))
-
+        self.res.append(res)
+        res = [
+            Production("N", ["'foo'"]),
+            Production("N", ["'bar'"])
+        ]
+        self.res.append(res)
+        for line, res in zip(self.lines, self.res):
+            self.assertCountEqual(res, Production._parse_production(line))
 
 class TestParseGrammar(unittest.TestCase):
 
