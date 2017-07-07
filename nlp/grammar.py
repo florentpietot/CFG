@@ -69,7 +69,6 @@ class Production(object):
         m = _NONTERMINAL_RE.match(line)
         # TODO: the strip() is not elegant, fix if possible
         lhs, pos = m.group().strip(), m.end()
-        line = line.strip()
 
         # Skip over the arrow
         m = _ARROW_RE.match(line, pos)
@@ -79,6 +78,7 @@ class Production(object):
 
         while pos < len(line):
             # Terminal
+            # print(line[pos:])
             if line[pos] in "\'\"":
                 m = _TERMINAL_RE.match(line, pos)
                 pos = m.end()
@@ -92,18 +92,27 @@ class Production(object):
             # Non-terminal
             else:
                 m = _NONTERMINAL_RE.match(line, pos)
+                # print(line[pos:])
                 pos = m.end()
                 # TODO: the strip() is not elegant, fix if possible
                 rhsides[-1].append(m.group().strip())
         return [Production(lhs, rhs) for rhs in rhsides]
 
 class Grammar(object):
+    """ A simple context-free grammar
+    """
 
     def __init__(self, productions=None):
+        """ Create a new grammar
+
+            Args:
+                productions: the list of productions for the grammar as a
+                list(Production)
+        """
         self._productions = productions
 
     def productions(self):
-        """ Returns the productions for this grammar
+        """ Returns the productions for this grammar as a ``list``
         """
         return self._productions
 
@@ -128,16 +137,11 @@ class Grammar(object):
             except ValueError:
                 raise ValueError("Parse error on line %s: %s" % (linenum,
                                                                  line))
-
-            test = line[1:].split(None, 1)
-            print(test)
-            productions.append(line)
         return productions
 
 ###############
 ### Helpers ###
 ###############
-
 
 _NONTERMINAL_RE = re.compile(r'([\w][\w]*) \s*', re.VERBOSE)
 _ARROW_RE = re.compile(r'\s* -> \s*', re.VERBOSE)
