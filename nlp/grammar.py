@@ -111,6 +111,19 @@ class Grammar(object):
         """
         self._productions = productions
 
+    def __str__(self):
+        """ Returns a verbose representation of this ``grammar`` as a string
+        """
+        str = "Grammar with %d productions: " % len(self._productions)
+        for production in self._productions:
+            str += '\n%s' % production
+        return str
+
+    def __repr__(self):
+        """ Returns a concise representation of this ``grammar`` as a string
+        """
+        return "Grammar with %d productions" % len(self._productions)
+
     def productions(self):
         """ Returns the productions for this grammar as a ``list``
         """
@@ -137,7 +150,7 @@ class Grammar(object):
             except ValueError:
                 raise ValueError("Parse error on line %s: %s" % (linenum,
                                                                  line))
-        return productions
+        return Grammar(productions)
 
 ###############
 ### Helpers ###

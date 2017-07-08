@@ -6,6 +6,7 @@
 """
 
 import unittest
+import copy
 from nlp.grammar import Production, Grammar
 
 
@@ -30,6 +31,14 @@ class TestProduction(unittest.TestCase):
         res = "S -> NP VP"
         self.assertEqual(res, str(self.production))
 
+    def test_eq(self):
+        """ Test equality """
+        other = copy.copy(self.production)
+        self.assertEqual(self.production, other)
+
+    def test_ne(self):
+        """ Test inequality """
+        other = Production("NP", ["N"])
 
 class TestParseProduction(unittest.TestCase):
 
@@ -39,10 +48,12 @@ class TestParseProduction(unittest.TestCase):
         self.lines.append("Adj -> 'fall' | 'spring' | 'purple' | 'left'")
 
     def test_return_array(self):
+        """ Make sure it returns an array """
         self.assertIsInstance(Production._parse_production(self.lines[0]),
                               list)
 
     def test_parse(self):
+        """ Should work properly on valid data """
         self.res = []
         res = [
             Production("NP", ["N"]),
@@ -82,6 +93,20 @@ class TestGrammar(unittest.TestCase):
         """
         self.assertEqual(self.productions, self.grammar.productions())
 
+    def test_str(self):
+        """ Should return the verbose representation of the ``grammar`` as a
+        string
+        """
+        res = "Grammar with 2 productions: \nNP -> N\nNP -> D N"
+        self.assertEqual(res, str(self.grammar))
+
+    def test_repr(self):
+        """ Should return the concise representation of the ``grammar``as a
+        string
+        """
+        res = "Grammar with 2 productions"
+        self.assertEqual(res, repr(self.grammar))
+
 
 class TestParseGrammar(unittest.TestCase):
 
@@ -98,11 +123,30 @@ class TestParseGrammar(unittest.TestCase):
         for input in inputs:
             self.assertRaises(AssertionError, Grammar.parse_grammar, input)
 
-    def test_return_array(self):
+    def test_return_grammar_object(self):
         """ parse_grammar should return an array
         """
         self.assertIsInstance(Grammar.parse_grammar(self.grammar_as_string),
-                              list)
+                              Grammar)
+
+    def test_parse_grammar(self):
+        # TODO: define __eq__ for Grammar object so we can test equality
+        """ Test that the string representation of a grammar obtained using
+        parse_grammar is equal to one created with constructor.
+        """
+        productions = [
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"]),
+            Production("N", ["'fall'"]),
+            Production("N", ["'spring'"]),
+            Production("N", ["'leaves'"]),
+            Production("N", ["'dog'"]),
+            Production("N", ["'cat'"]),
+            Production("D", ["'the'"])
+        ]
+        res = Grammar(productions)
+        self.assertEqual(str(res),
+                         str(Grammar.parse_grammar(self.grammar_as_string)))
 
 
 if __name__ == "__main__":
