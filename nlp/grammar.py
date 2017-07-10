@@ -78,7 +78,6 @@ class Production(object):
 
         while pos < len(line):
             # Terminal
-            # print(line[pos:])
             if line[pos] in "\'\"":
                 m = _TERMINAL_RE.match(line, pos)
                 pos = m.end()
