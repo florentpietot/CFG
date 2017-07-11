@@ -5,7 +5,7 @@
 """ Basic tree model we will use for parsing sentences given a ``grammar``
 """
 
-from nlp.tokenizer import tokenize
+from nlp.tokenize import tokenize
 
 class Tree(object):
     """ Tree model for building a tree of productions
@@ -14,7 +14,11 @@ class Tree(object):
 
     def __init__(self, node=None, children=None):
         self._node = node
-        self._children = children
+        # TODO: not sure this is the better way
+        if children:
+            self._children = tuple(children)
+        else:
+            self._children = None
 
     def node(self):
         """ Returns the root node of this ``Tree``
@@ -29,10 +33,12 @@ class Tree(object):
     def __str__(self):
         """ Returns a verbose representation of this ``Tree`` as a string
         """
-        string = "%s" % self._node
+        string = "(%s" % self._node
         if self._children:
             for child in self._children:
-                string += "\n\t%s" % str(child)
+                string += ", "
+                string += "%s" % str(child)
+        string += ")"
         return string
 
     def __repr__(self):
@@ -44,7 +50,7 @@ class Tree(object):
         """ Return True if this ``Tree`` is equal to ``other``.
         """
         return (type(self) == type(other) and
-               self._child == other._child and
+               self._node  == other._node and
                self._children == other._children)
 
     def __ne__(self, other):
@@ -77,10 +83,26 @@ class Tree(object):
 
 
 def tree_from_string(string, grammar=None):
+    """ Returns a tree from a string and a ``grammar``
+    """
     if grammar is None:
         assert ValueError("Grammar param can't be none.")
     tokens = tokenize(string)
-    for token in tokens:
+    trees = []
+    token = tokens[0]
+    token = "'%s'" % token
+    for production in grammar.productions():
+        if token in production.rhs():
+            trees.append(Tree(node=production))
+    return trees
+
+def tree_from_grammar(grammar):
+    """ Returns a tree given a ``grammar``
+    """
+    for production in grammar.productions():
         pass
 
-
+def tree_from_production(production):
+    """ Returns a tree from a ``production``
+    """
+    return Tree(node=production.lhs(), children=production.rhs())
