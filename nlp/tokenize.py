@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
@@ -11,6 +12,9 @@ def tokenize(string):
             string(str): string to tokenize
         Return:
             token(list): list of words as ``strings``
+
+        Example:
+            "Fall leaves fall" -> ["fall", "leaves", "fall"]
     """
     tokens = string.lower().split()
     return tokens
