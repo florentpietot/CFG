@@ -43,34 +43,22 @@ class TestProduction(unittest.TestCase):
 class TestParseProduction(unittest.TestCase):
 
     def setUp(self):
-        self.lines = []
-        self.lines.append("NP -> N | D N | Adj N | D Adj N")
-        self.lines.append("Adj -> 'fall' | 'spring' | 'purple' | 'left'")
+        self.line = "Adj -> 'fall' | 'spring' | 'purple' | 'left'"
 
     def test_return_array(self):
         """ Make sure it returns an array """
-        self.assertIsInstance(Production._parse_production(self.lines[0]),
+        self.assertIsInstance(Production._parse_production(self.line),
                               list)
 
     def test_parse(self):
         """ Should work properly on valid data """
-        self.res = []
-        res = [
-            Production("NP", ["N"]),
-            Production("NP", ["D", "N"]),
-            Production("NP", ["Adj", "N"]),
-            Production("NP", ["D", "Adj", "N"])
-        ]
-        self.res.append(res)
         res = [
             Production("Adj", ["'fall'"]),
             Production("Adj", ["'spring'"]),
             Production("Adj", ["'purple'"]),
             Production("Adj", ["'left'"])
         ]
-        self.res.append(res)
-        for line, res in zip(self.lines, self.res):
-            self.assertCountEqual(res, Production._parse_production(line))
+        self.assertEqual(res, Production._parse_production(self.line))
 
 
 class TestGrammar(unittest.TestCase):
