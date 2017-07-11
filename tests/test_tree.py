@@ -6,16 +6,24 @@
 """
 
 import unittest
-from nlp.tree import Tree
-from nlp.grammar import Production
+from nlp.tree import (Tree, tree_from_string, tree_from_grammar,
+                      tree_from_production)
+from nlp.grammar import Production, Grammar
 
 class TestTree(unittest.TestCase):
     """ Basic tests for instantiation
     """
 
     def setUp(self):
+        # self.node = "root_node"
+        # self.children = [Tree("child1"), Tree("child2"), Tree("child3")]
         self.node = "root_node"
-        self.children = [Tree("child1"), Tree("child2"), Tree("child3")]
+        self.child_1 = Tree(node="child_1", children=["grandchild_1",
+                                                      "grandchild_2",
+                                                      "grandchild_3"])
+        self.child_2 = Tree(node="child_2")
+        self.child_3 = "child_3"
+        self.children = [self.child_1, self.child_2, self.child_3]
         self.tree = Tree(node=self.node, children=self.children)
 
     def test_node(self):
@@ -24,7 +32,7 @@ class TestTree(unittest.TestCase):
                       of the tree")
 
     def test_children(self):
-        res = self.children
+        res = tuple(self.children)
         self.assertEqual(res, self.tree.children(), "Should return \
                          the children of the tree")
 
@@ -33,14 +41,14 @@ class TestTree(unittest.TestCase):
 
     def test_str(self):
         # TODO: change this, this is bad
-        res = "root_node\n\tchild1\n\tchild2\n\tchild3"
+        res = "(root_node, (child_1, grandchild_1, grandchild_2, grandchild_3), (child_2), child_3)"
         self.assertEqual(res, str(self.tree))
 
     def test_repr_is_string(self):
         self.assertIsInstance(repr(self.tree), str, msg="String expected")
 
     def test_repr(self):
-        res = "(%r, %r)" % (self.node, self.children)
+        res = "(%r, %r)" % (self.node, tuple(self.children))
         self.assertEqual(res, repr(self.tree))
 
 
@@ -82,6 +90,40 @@ class TestLeaves(unittest.TestCase):
 
 class TestTreeFromString(unittest.TestCase):
     pass
+
+class TestTreeFromProduction(unittest.TestCase):
+
+    def setUp(self):
+        self.production = Production("S", ["NP", "VP"])
+
+    def test_tree_from_production(self):
+        res = Tree(node="S", children=["NP", "VP"])
+        self.assertEqual(res, tree_from_production(self.production))
+
+class TestTreeFromGrammar(unittest.TestCase):
+
+    def setUp(self):
+        grammar_as_string = """
+            S -> NP VP
+            NP -> N
+            VP -> V NP | V
+            N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
+            V -> 'spring' | 'leaves' | 'fall' | 'left'
+        """
+        self.grammar = Grammar.parse_grammar(grammar_as_string)
+
+    def test_tree_from_grammar(self):
+        V = Tree(node="V", children=["'spring'", "'leaves'", "'fall'",
+                                         "'left'"])
+        N = Tree(node="N", children=["'fall'", "'spring'", "'leaves'",
+                                         "'dog'", "'cat'"])
+        NP = Tree(node="NP", children=[N])
+        VP = Tree(node="VP", children=[V, NP])
+        S = Tree(node="S", children=[NP, VP])
+        res = S
+        print(res)
+        # self.assertEqual(res, tree_from_grammar(self.grammar))
+
 
 
 if  __name__ == "__main__":
