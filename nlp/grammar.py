@@ -12,6 +12,7 @@
 import re
 
 class Production(object):
+    # TODO: docstring for this
 
     def __init__(self, lhs, rhs):
         self._lhs = lhs
@@ -101,32 +102,40 @@ class Grammar(object):
     """ A simple context-free grammar
     """
 
-    def __init__(self, productions=None):
+    def __init__(self, start, productions):
         """ Create a new grammar
 
             Args:
                 productions: the list of productions for the grammar as a
                 list(Production)
         """
+        self._start = start
         self._productions = productions
 
-    def __str__(self):
-        """ Returns a verbose representation of this ``grammar`` as a string
+    def start(self):
+        """ Return the start of this ``production``
         """
-        str = "Grammar with %d productions: " % len(self._productions)
-        for production in self._productions:
-            str += '\n%s' % production
-        return str
-
-    def __repr__(self):
-        """ Returns a concise representation of this ``grammar`` as a string
-        """
-        return "Grammar with %d productions" % len(self._productions)
+        return self._start
 
     def productions(self):
         """ Returns the productions for this grammar as a ``list``
         """
         return self._productions
+
+    def __str__(self):
+        """ Returns a verbose representation of this ``grammar`` as a string
+        """
+        string = ("Grammar starting with: \"%s\"\n%d productions:" %
+                  (self._start, len(self._productions)))
+        for production in self._productions:
+            string += '\n%s' % production
+        return string
+
+    def __repr__(self):
+        """ Returns a concise representation of this ``grammar`` as a string
+        """
+        return ("Grammar with %d productions starting with \"%s\"" %
+                (len(self._productions), self._start))
 
     @classmethod
     def parse_grammar(cls, input):
@@ -141,15 +150,19 @@ class Grammar(object):
         assert isinstance(input, str)
         lines = input.split('\n')
         productions = []
+        start = None
         for linenum, line in enumerate(lines):
             line = line.strip()
             if line.startswith("#") or line=="": continue
             try:
-                productions += Production._parse_production(line)
+                production = Production._parse_production(line)
+                productions += production
+                if start is None and len(production) > 0:
+                    start = production[0].lhs()
             except ValueError:
                 raise ValueError("Parse error on line %s: %s" % (linenum,
                                                                  line))
-        return Grammar(productions)
+        return Grammar(start, productions)
 
 ###############
 ### Helpers ###

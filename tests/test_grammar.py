@@ -64,11 +64,12 @@ class TestParseProduction(unittest.TestCase):
 class TestGrammar(unittest.TestCase):
 
     def setUp(self):
+        self.start = "NP"
         self.productions = [
             Production("NP", ["N"]),
             Production("NP", ["D", "N"])
         ]
-        self.grammar = Grammar(self.productions)
+        self.grammar = Grammar(self.start, self.productions)
 
     def test_productions_is_list(self):
         """ Should return the list of ``productions``
@@ -85,14 +86,15 @@ class TestGrammar(unittest.TestCase):
         """ Should return the verbose representation of the ``grammar`` as a
         string
         """
-        res = "Grammar with 2 productions: \nNP -> N\nNP -> D N"
+        res = ("Grammar starting with: \"%s\"\n2 productions:\nNP -> N\nNP -> D N"
+               % (self.grammar.start()))
         self.assertEqual(res, str(self.grammar))
 
     def test_repr(self):
         """ Should return the concise representation of the ``grammar``as a
         string
         """
-        res = "Grammar with 2 productions"
+        res = "Grammar with 2 productions starting with \"NP\""
         self.assertEqual(res, repr(self.grammar))
 
 
@@ -122,6 +124,7 @@ class TestParseGrammar(unittest.TestCase):
         """ Test that the string representation of a grammar obtained using
         parse_grammar is equal to one created with constructor.
         """
+        start = "NP"
         productions = [
             Production("NP", ["N"]),
             Production("NP", ["D", "N"]),
@@ -132,7 +135,7 @@ class TestParseGrammar(unittest.TestCase):
             Production("N", ["'cat'"]),
             Production("D", ["'the'"])
         ]
-        res = Grammar(productions)
+        res = Grammar(start, productions)
         self.assertEqual(str(res),
                          str(Grammar.parse_grammar(self.grammar_as_string)))
 
