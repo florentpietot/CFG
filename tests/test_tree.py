@@ -11,12 +11,10 @@ from nlp.tree import (Tree, tree_from_string, tree_from_grammar,
 from nlp.grammar import Production, Grammar
 
 class TestTree(unittest.TestCase):
-    """ Basic tests for instantiation
+    """ Basic tests for instantiation of ``tree``
     """
 
     def setUp(self):
-        # self.node = "root_node"
-        # self.children = [Tree("child1"), Tree("child2"), Tree("child3")]
         self.node = "root_node"
         self.child_1 = Tree(node="child_1", children=["grandchild_1",
                                                       "grandchild_2",
@@ -53,7 +51,7 @@ class TestTree(unittest.TestCase):
 
 
 class TestLeaves(unittest.TestCase):
-    """ tests for the leaves() function
+    """ Test case for getting the leaves from a ``tree``
     """
 
     def setUp(self):
@@ -74,24 +72,14 @@ class TestLeaves(unittest.TestCase):
         res.append(self.child_3)
         self.assertEqual(res, self.tree.leaves())
 
-# class TestAddChild(unittest.TestCase):
-#     """ Tests for the add_child function
-#     """
-
-#     def setUp(self):
-#         self.node = "root_node"
-#         self.children = ["child1", "child2", "child3"]
-#         self.tree = Tree(self.node)
-
-#     def test_add_child(self):
-#         child = "child"
-#         self.tree.add_child(child)
-
 
 class TestTreeFromString(unittest.TestCase):
     pass
 
+
 class TestTreeFromProduction(unittest.TestCase):
+    """ Test case for creating trees from ``production``
+    """
 
     def setUp(self):
         self.production = Production("S", ["NP", "VP"])
@@ -101,6 +89,8 @@ class TestTreeFromProduction(unittest.TestCase):
         self.assertEqual(res, tree_from_production(self.production))
 
 class TestTreeFromGrammar(unittest.TestCase):
+    """ Test case for creating trees from ``grammar``
+    """
 
     def setUp(self):
         grammar_as_string = """
@@ -121,9 +111,8 @@ class TestTreeFromGrammar(unittest.TestCase):
         VP = Tree(node="VP", children=[V, NP])
         S = Tree(node="S", children=[NP, VP])
         res = S
-        print(res)
+        tree_from_grammar(self.grammar)
         # self.assertEqual(res, tree_from_grammar(self.grammar))
-
 
 
 if  __name__ == "__main__":

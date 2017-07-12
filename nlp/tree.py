@@ -100,7 +100,9 @@ def tree_from_grammar(grammar):
     """ Returns a tree given a ``grammar``
     """
     for production in grammar.productions():
+        # get list of production that contains start
         pass
+
 
 def tree_from_production(production):
     """ Returns a tree from a ``production``

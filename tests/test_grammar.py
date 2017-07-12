@@ -71,17 +71,6 @@ class TestGrammar(unittest.TestCase):
         ]
         self.grammar = Grammar(self.start, self.productions)
 
-    def test_productions_is_list(self):
-        """ Should return the list of ``productions``
-            as a ``list``
-        """
-        self.assertIsInstance(self.grammar.productions(), list)
-
-    def test_productions(self):
-        """ Should return the list of ``predictions``
-        """
-        self.assertEqual(self.productions, self.grammar.productions())
-
     def test_str(self):
         """ Should return the verbose representation of the ``grammar`` as a
         string
@@ -98,13 +87,81 @@ class TestGrammar(unittest.TestCase):
         self.assertEqual(res, repr(self.grammar))
 
 
+class TestGrammarProductions(unittest.TestCase):
+    """ Test case for the productions(self, lhs=None)
+    This should returns the ``productions`` of the ``grammar``
+    filtered by left-hand side
+    """
+
+    def setUp(self):
+        self.productions = [
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"]),
+            Production("N", ["'fall'"]),
+            Production("N", ["'spring'"]),
+            Production("N", ["'leaves'"]),
+            Production("N", ["'dog'"]),
+            Production("N", ["'cat'"]),
+            Production("D", ["'the'"])
+        ]
+        self.grammar = Grammar("NP", self.productions)
+
+    def test_lhs_is_none(self):
+        res = self.productions
+        self.assertIsInstance(self.grammar.productions(), list)
+        self.assertEqual(res, self.grammar.productions(),
+                         msg=("Should return all ``productions``\
+                              of this``grammar``"))
+
+
+    def test_standard_use_case(self):
+        res = self.productions[:2]
+        self.assertIsInstance(self.grammar.productions(lhs="NP"), list)
+        self.assertCountEqual(res, self.grammar.productions(lhs="NP"))
+
+
+class TestGrammarCalculateIndexes(unittest.TestCase):
+
+    def setUp(self):
+        self.start = "NP"
+        self.productions = [
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"]),
+            Production("N", ["'fall'"]),
+            Production("N", ["'spring'"]),
+            Production("N", ["'leaves'"]),
+            Production("D", ["'the'"])
+        ]
+        self.grammar = Grammar(self.start, self.productions)
+
+    def test_calculate_lhs_indexes(self):
+        # TODO: no idea on how to test this
+        """ We'll just check that this ``grammar``._lhs_index is properly set
+        after init
+        """
+        res = {}
+        res["NP"] = [
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"])
+        ]
+        res["N"] = [
+            Production("N", ["'fall'"]),
+            Production("N", ["'spring'"]),
+            Production("N", ["'leaves'"])
+        ]
+        res["D"] = [
+            Production("D", ["'the'"])
+        ]
+        self.assertEqual(res, self.grammar._calculate_lhs_index())
+
+
 class TestParseGrammar(unittest.TestCase):
 
     def setUp(self):
         self.grammar_as_string = """
-            NP -> N | D N
-            N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
-            D -> 'the'
+        NP -> N | D N
+        N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
+        D -> 'the'
         """
 
     def test_error_if_input_is_not_a_string(self):
@@ -138,6 +195,8 @@ class TestParseGrammar(unittest.TestCase):
         res = Grammar(start, productions)
         self.assertEqual(str(res),
                          str(Grammar.parse_grammar(self.grammar_as_string)))
+
+
 
 
 if __name__ == "__main__":
