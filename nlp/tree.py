@@ -70,6 +70,7 @@ class Tree(list):
         return not self == other
 
     def __getitem__(self, index):
+        """ Subclass ``list`` """
         if isinstance(index, (int, slice)):
             return list.__getitem__(self, index)
         elif isinstance(index, (list, tuple)):
@@ -82,6 +83,21 @@ class Tree(list):
         else:
             raise TypeError("Index must be integer, or slice/list/tuple of\
                             integers")
+
+    def __setitem__(self, index, value):
+        """ Subclass ``list`` """
+        if isinstance(index, (int, slice)):
+            list.__setitem__(self, index, value)
+        elif isinstance(index, (list, tuple)):
+            if len(index) == 0:
+                raise IndexError("Can't assign to an empty index")
+            elif len(index) == 1:
+                self[index[0]] = value  # recursive
+            else:
+                self[index[0]][index[1:]] = value  # recursive
+        else:
+            raise TypeError("Index must be an integer, or a slice/list/tuple \
+                            of integers")
 
     def copy(self):
         return Tree(self._node, list(self))

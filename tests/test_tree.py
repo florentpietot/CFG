@@ -89,6 +89,41 @@ class TestGetItem(unittest.TestCase):
         self.assertEqual(res, self.tree[(0, 1)])
         self.assertEqual(res, self.tree[[0, 1]])
 
+class TestSetItems(unittest.TestCase):
+    """ Test __setitem__ for our ``tree`` class
+    """
+
+    def setUp(self):
+        self.tree = Tree("S", [Tree("NP", ["D", "N"]), "VP"])
+        self.new_child = Tree("VP", ["V", "N"])
+
+    def test_set_existing(self):
+        """ Test set/replace an existing node of the tree with an integer index
+        """
+        res = Tree("S", [Tree("NP", ["D", "N"]), self.new_child])
+        self.tree[1] = self.new_child
+        self.assertEqual(res, self.tree)
+
+    def test_set_tuple(self):
+        """ Test with a tuple of length > 1 """
+        res = Tree("S", [Tree("NP", ["D", self.new_child]), "VP"])
+        print(res)
+        index = (0, 1)
+        self.tree[index] = self.new_child
+        self.assertEqual(res, self.tree)
+
+    def test_set_array(self):
+        """ Test with a list of length > 1 """
+        res = Tree("S", [Tree("NP", ["D", self.new_child]), "VP"])
+        index = [0, 1]
+        self.tree[index] = self.new_child
+        self.assertEqual(res, self.tree)
+
+    # def test_set_empty_index(self):
+    #     """ Test when the index is an empty array or tuple """
+    #     index = []
+    #     self.tree[index] = self.new_child
+
 
 class TestLeaves(unittest.TestCase):
     """ Test case for getting the leaves from a ``tree``
