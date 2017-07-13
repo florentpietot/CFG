@@ -70,22 +70,41 @@ class Tree(list):
         return not self == other
 
     def __getitem__(self, index):
-        """ Subclass ``list`` """
+        """ Subclass ``list`` own implementation
+            Multiple cases depending on type(index):
+                - ìnt or slice: regular ``list`` behavior
+                - enumerable (list or tuple):
+                    - if empty: return all tree
+                    - not empty: recursively call __getitem__
+
+            Raises a TypeError if indexes are not integers
+        """
         if isinstance(index, (int, slice)):
             return list.__getitem__(self, index)
         elif isinstance(index, (list, tuple)):
             if len(index) == 0:
                 return self
             elif len(index) == 1:
-                return self[index[0]]
+                return self[index[0]]  # recursive call
             else:
-                return self[index[0]][index[1:]]  # recursive
+                return self[index[0]][index[1:]]  # recursive call
         else:
             raise TypeError("Index must be integer, or slice/list/tuple of\
                             integers")
 
     def __setitem__(self, index, value):
-        """ Subclass ``list`` """
+        """ Subclass ``list`` own implementation`
+
+            Multiple cases depending on type(index):
+                - ìnt or slice: regular ``list`` behavior
+                - enumerable (list or tuple):
+                    - if empty: raises IndexError
+                    - not empty: recursively call __setitem__
+
+            Errors:
+                Raise ``IndexError`` if index is empty list/tuple
+                Raise ``TypeError`` if indexes are not integers
+        """
         if isinstance(index, (int, slice)):
             list.__setitem__(self, index, value)
         elif isinstance(index, (list, tuple)):
