@@ -13,6 +13,10 @@ class Tree(list):
     """
 
     def __init__(self, node, children=None):
+        """ Args:
+                node : node of this ``tree``
+                children: children of this ``tree``:
+        """
         self._node = node
         # TODO: not sure this is the better way
         if children:
@@ -64,6 +68,23 @@ class Tree(list):
         """ Return True if this ``Tree`` is not equal to ``other``.
         """
         return not self == other
+
+    def __getitem__(self, index):
+        if isinstance(index, (int, slice)):
+            return list.__getitem__(self, index)
+        elif isinstance(index, (list, tuple)):
+            if len(index) == 0:
+                return self
+            elif len(index) == 1:
+                return self[index[0]]
+            else:
+                return self[index[0]][index[1:]]  # recursive
+        else:
+            raise TypeError("Index must be integer, or slice/list/tuple of\
+                            integers")
+
+    def copy(self):
+        return Tree(self._node, list(self))
 
     def contains(self, elem):
         pass

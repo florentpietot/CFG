@@ -49,6 +49,46 @@ class TestTree(unittest.TestCase):
         res = "(%r, %r)" % (self.node, tuple(self.children))
         self.assertEqual(res, repr(self.tree))
 
+    def test_copy(self):
+        copy = self.tree.copy()
+        self.assertEqual(copy, self.tree, "Copy should be equal")
+
+    def test_len(self):
+        res = 3
+        self.assertEqual(res, len(self.tree), "Lenght of tree should be equal to 6")
+
+class TestGetItem(unittest.TestCase):
+    """ Test case for __getitem__
+    """
+
+    def setUp(self):
+        self.node = "node"
+        self.child_1 = Tree(node="child_1", children=["grandchild_1",
+                                                "grandchild_2",
+                                                "grandchild_3"])
+        self.child_2 = Tree(node="child_2")
+        self.child_3 = "child_3"
+        self.tree = Tree(node=self.node, children=[self.child_1, self.child_2,
+                                                   self.child_3])
+    def test_get_no_index(self):
+        """ Test for when index is empty tuple/array """
+        res = self.tree
+        self.assertEqual(res, self.tree[[]], "Should return original tree")
+        self.assertEqual(res, self.tree[()], "Should return original tree")
+
+    def test_get_first_child(self):
+        """ Should get first child by calling self.tree[0] """
+        res = self.child_1
+        self.assertEqual(res, self.tree[0], "Didn't get first child")
+
+    def test_get_second_grandchild(self):
+        """ Should get grandchild_2 by calling
+            self.tree[(0, 1)] or self.tree[[0, 1]]
+        """
+        res = "grandchild_2"
+        self.assertEqual(res, self.tree[(0, 1)])
+        self.assertEqual(res, self.tree[[0, 1]])
+
 
 class TestLeaves(unittest.TestCase):
     """ Test case for getting the leaves from a ``tree``
