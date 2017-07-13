@@ -26,6 +26,13 @@ class TestProduction(unittest.TestCase):
         res = ("NP", "VP")
         self.assertEqual(res, self.production.rhs())
 
+    def test_rhs_single_element(self):
+        """ Assert it still returns a tuple """
+        lhs = "S"
+        rhs = ["NP"]
+        production = Production(lhs, rhs)
+        self.assertIsInstance(production.rhs(), tuple)
+
     def test_str(self):
         #TODO: handle terminals
         res = "S -> NP VP"
@@ -135,7 +142,7 @@ class TestGrammarCalculateIndexes(unittest.TestCase):
         self.grammar = Grammar(self.start, self.productions)
 
     def test_calculate_lhs_indexes(self):
-        # TODO: no idea on how to test this
+        # TODO: We could remove this
         """ We'll just check that this ``grammar``._lhs_index is properly set
         after init
         """
@@ -195,8 +202,6 @@ class TestParseGrammar(unittest.TestCase):
         res = Grammar(start, productions)
         self.assertEqual(str(res),
                          str(Grammar.parse_grammar(self.grammar_as_string)))
-
-
 
 
 if __name__ == "__main__":

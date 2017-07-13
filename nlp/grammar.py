@@ -106,6 +106,7 @@ class Grammar(object):
         """ Create a new grammar
 
             Args:
+                `start`(string): start of the grammar
                 productions: the list of productions for the grammar as a
                 list(Production)
         """
@@ -113,6 +114,7 @@ class Grammar(object):
         self._productions = productions
         self._lhs_index = self._calculate_lhs_index()
 
+    # TODO: maybe remove this?
     def _calculate_lhs_index(self):
         """ Index ``productions`` of this ``grammar`` on lhs
             Example:
@@ -127,20 +129,6 @@ class Grammar(object):
             lhs_index[lhs].append(prod)
         return lhs_index
 
-    # def _calculate_indexes(self):
-    #     """ Index productions of this ``Grammar``
-    #         We currently only index on left-hand sides
-    #         self._lhs_index will return an array of dict
-    #         Example:
-    #             self._lhs_index["VP"]  will return all ``productions`` of this
-    #             ``grammar`` that have "VP" as left-hand side.
-    #     """
-    #     self._lhs_index =  {}
-    #     for prod in self._productions:
-    #         lhs = prod.lhs()
-    #         if lhs not in self._lhs_index:
-    #             self._lhs_index[lhs] = []
-    #         self._lhs_index[lhs].append(prod)
 
     def start(self):
         """ Return the start of this ``production``
@@ -169,7 +157,12 @@ class Grammar(object):
         """
         if not lhs:
             return self._productions
-        return self._lhs_index[lhs]
+
+        # TODO: clean this if not needed
+        # return self._lhs_index[lhs]
+
+        # Filter on left-hand side
+        return list(filter(lambda x: lhs == x._lhs, self._productions))
 
     @classmethod
     def parse_grammar(cls, input):

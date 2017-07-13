@@ -73,6 +73,10 @@ class TestLeaves(unittest.TestCase):
         self.assertEqual(res, self.tree.leaves())
 
 
+class TestAddChild(unittest.TestCase):
+    pass
+
+
 class TestTreeFromString(unittest.TestCase):
     pass
 
@@ -111,8 +115,29 @@ class TestTreeFromGrammar(unittest.TestCase):
         VP = Tree(node="VP", children=[V, NP])
         S = Tree(node="S", children=[NP, VP])
         res = S
-        tree_from_grammar(self.grammar)
+        # tree = tree_from_grammar(self.grammar)
+        # print(tree)
         # self.assertEqual(res, tree_from_grammar(self.grammar))
+
+
+class TestSubtreeFromProduction(unittest.TestCase):
+
+    def setUp(self):
+        productions = [
+            Production("S", ["NP", "VP"]),
+            Production("NP", ["N"]),
+            Production("NP", ["D", "N"]),
+            Production("VP", ["V"]),
+            Production("VP", ["V", "N"])
+        ]
+        self.grammar = Grammar("S", productions)
+
+    def test_subtree_from_production(self):
+        # get a random start production
+        res = Tree("S", children=[
+            Tree("NP", children=["N", ["D N"]]),
+            Tree("VP", children="V")])
+        start_prod = self.grammar.productions(self.grammar.start())[0]
 
 
 if  __name__ == "__main__":

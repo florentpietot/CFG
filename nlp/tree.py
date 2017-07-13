@@ -7,18 +7,19 @@
 
 from nlp.tokenize import tokenize
 
-class Tree(object):
+class Tree(list):
     """ Tree model for building a tree of productions
         Each node is a production
     """
 
-    def __init__(self, node=None, children=None):
+    def __init__(self, node, children=None):
         self._node = node
         # TODO: not sure this is the better way
         if children:
             self._children = tuple(children)
+            list.__init__(self, children)
         else:
-            self._children = None
+            list.__init__(self, [])
 
     def node(self):
         """ Returns the root node of this ``Tree``
@@ -26,6 +27,7 @@ class Tree(object):
         return self._node
 
     def children(self):
+        # TODO: maybe remove?
         """ Returns the children of this ``Tree``
         """
         return self._children
@@ -34,24 +36,29 @@ class Tree(object):
         """ Returns a verbose representation of this ``Tree`` as a string
         """
         string = "(%s" % self._node
-        if self._children:
-            for child in self._children:
+        if len(self) > 0:
+            for child in self:
                 string += ", "
                 string += "%s" % str(child)
         string += ")"
+        # if self._children:
+        #     for child in self._children:
+        #         string += ", "
+        #         string += "%s" % str(child)
+        # string += ")"
         return string
 
     def __repr__(self):
         """ Returns a concise representation of this ``Tree`` as a string
         """
-        return "(%r, %r)" % (self._node, self._children)
+        return "(%r, %r)" % (self._node, tuple(self))
 
     def __eq__(self, other):
         """ Return True if this ``Tree`` is equal to ``other``.
         """
         return (type(self) == type(other) and
                self._node  == other._node and
-               self._children == other._children)
+               list(self) == list(other))
 
     def __ne__(self, other):
         """ Return True if this ``Tree`` is not equal to ``other``.
@@ -65,8 +72,8 @@ class Tree(object):
         """ Returns the leaves of the tree
         """
         leaves = []
-        if self._children:
-            for child in self._children:
+        if self:
+            for child in self:
                 if isinstance(child, Tree):
                     leaves += child.leaves()
                 else:
@@ -74,12 +81,6 @@ class Tree(object):
         else:
             leaves.append(self._node)
         return leaves
-
-    def make_node(self, children=None):
-        pass
-
-    def add_child(self, node, child):
-        pass
 
 
 def tree_from_string(string, grammar=None):
@@ -99,10 +100,41 @@ def tree_from_string(string, grammar=None):
 def tree_from_grammar(grammar):
     """ Returns a tree given a ``grammar``
     """
-    for production in grammar.productions():
-        # get list of production that contains start
+    trees = []
+    for production in grammar.productions(lhs=grammar.start()):
+        children = []
+        for rhs in production.rhs():
+            sub_prod = grammar.productions(lhs=rhs)
+        tree = Tree(node=production.lhs, children=Tree())
+        res = Tree("S",
+                   children=[
+                       Tree("NP", children=["N", ["D N"]]),
+                       Tree("VP", children="V")])
+    return tree
+
+
+def subtree_for_production(production, grammar):
+    """ Recursively build subtrees for a given production
+    """
+    # children = []
+    # for rhs in production.rhs():
+    #     # get list of expansions
+    #     productions = grammar.productions(lhs=rhs) ## <- list
+    #     children.append(subtree_for_production())
+    return Tree(node=production.lhs(),
+                children=[subtree_for_production(production) for production in
+                          grammar.productions(lhs=production.rhs())])
+
+def tree_for_children(grammar, production):
+    for rhs in production.rhs():
         pass
 
+def recursive_tree_from_production(production):
+    pass
+
+def recursive_tree_from_start(grammar):
+
+    pass
 
 def tree_from_production(production):
     """ Returns a tree from a ``production``
