@@ -92,7 +92,6 @@ class Production(object):
             # Non-terminal
             else:
                 m = _NONTERMINAL_RE.match(line, pos)
-                # print(line[pos:])
                 pos = m.end()
                 # TODO: the strip() is not elegant, fix if possible
                 rhsides[-1].append(m.group().strip())

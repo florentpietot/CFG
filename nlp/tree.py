@@ -192,7 +192,6 @@ def tree_from_production(production):
     for rhs in production.rhs():
         # TODO: clear this hack by creating a NonTerminal class
         if rhs[0] is "\'":
-            print(rhs)
             children.append(rhs)
         else:
             children.append(Tree(rhs, []))
