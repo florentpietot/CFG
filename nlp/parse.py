@@ -25,7 +25,7 @@ class TopDownParser(object):
         """
         tokens = list(tokens)
         root_tree = Tree(self._grammar.start(), [])
-        frontier = root_tree
+        frontier = []
         return self._parse(tokens, root_tree, frontier)
 
     def _parse(self, tokens, initial_tree, frontier):
@@ -48,21 +48,49 @@ class TopDownParser(object):
         #     yield tree
 
     def _expand_tree(self, tree, frontier):
-        print(tree)
-        print(frontier)
-        # for production in self.grammar.productions(lhs=frontier):
-        #     print(production)
-        #     subtree = tree_from_production(production)
-        #     print(subtree)
-
-    def expand_tree(self, tree, frontier):
-        """ Generator function: recursively expand a tree
-            Args:
-                tree: the ``tree`` to expand
-                frontier: a ``list`` of node candidate to expand
+        """ Expand a tree following this ``parser.grammar`` rules
+            Returns all possible trees by expanding the first element of
+            frontier
         """
-        # Take first element of frontier
-        # frontier[0]
+        trees = []
+        frontiers = []
+        if len(frontier) > 0:
+            node = tree[frontier[0]]
+        else:
+            node = self.grammar().start()
+        for production in self.grammar().productions(lhs=node):
+            new_tree, new_frontier = self.expand_tree(tree, frontier,
+                                                      production)
+            trees.append(new_tree)
+            frontiers.append(new_frontier)
+        yield (trees, frontiers)
 
 
+    def expand_tree(self, tree, frontier, production):
+        """ Expand a tree from first element of a frontier given a production
 
+            Args:
+                tree: the ``tree`` to be expanded
+                frontier: the list of nodes candidates for expansion
+                production: production rule to follow in order to expand
+
+            Examples:
+                Tree: (S, NP, NP)
+                Frontier: it should be: [(0, ), (1, )]
+                Production: (NP -> D N)
+
+                Returns:
+                    Tree: (S, (NP, D, N), VP)
+                    Frontier: [(0, 0), (0, 1), (1, )]
+        """
+        subtree = tree_from_production(production)
+        if len(frontier) == 0:
+            new_tree = subtree
+            new_frontier = [(i, ) for i in range(len(production.rhs()))]
+        else:
+            new_tree = tree.copy()
+            new_tree[frontier[0]] = tree_from_production(production)
+            new_frontier = [frontier[0] + (i, ) for i in
+                            range(len(production.rhs()))]
+            new_frontier = new_frontier + frontier[1:]
+        return new_tree, new_frontier
