@@ -6,8 +6,7 @@
 """
 
 import unittest
-from nlp.tree import (Tree, tree_from_string, tree_from_grammar,
-                      tree_from_production)
+from nlp.tree import (Tree, tree_from_string, tree_from_production)
 from nlp.grammar import Production, Grammar
 
 class TestTree(unittest.TestCase):
@@ -107,7 +106,6 @@ class TestSetItems(unittest.TestCase):
     def test_set_tuple(self):
         """ Test with a tuple of length > 1 """
         res = Tree("S", [Tree("NP", ["D", self.new_child]), "VP"])
-        print(res)
         index = (0, 1)
         self.tree[index] = self.new_child
         self.assertEqual(res, self.tree)
@@ -164,7 +162,12 @@ class TestTreeFromProduction(unittest.TestCase):
         self.production = Production("S", ["NP", "VP"])
 
     def test_tree_from_production(self):
-        res = Tree(node="S", children=["NP", "VP"])
+        res = Tree("S", [Tree("NP", []), Tree("VP", [])])
+        self.assertEqual(res, tree_from_production(self.production))
+
+    def test_tree_from_production_with_terminal(self):
+        self.production = Production("N", ["'fall'"])
+        res = Tree("N", ["'fall'"])
         self.assertEqual(res, tree_from_production(self.production))
 
 class TestTreeFromGrammar(unittest.TestCase):
@@ -180,19 +183,6 @@ class TestTreeFromGrammar(unittest.TestCase):
             V -> 'spring' | 'leaves' | 'fall' | 'left'
         """
         self.grammar = Grammar.parse_grammar(grammar_as_string)
-
-    def test_tree_from_grammar(self):
-        V = Tree(node="V", children=["'spring'", "'leaves'", "'fall'",
-                                         "'left'"])
-        N = Tree(node="N", children=["'fall'", "'spring'", "'leaves'",
-                                         "'dog'", "'cat'"])
-        NP = Tree(node="NP", children=[N])
-        VP = Tree(node="VP", children=[V, NP])
-        S = Tree(node="S", children=[NP, VP])
-        res = S
-        # tree = tree_from_grammar(self.grammar)
-        # print(tree)
-        # self.assertEqual(res, tree_from_grammar(self.grammar))
 
 
 class TestSubtreeFromProduction(unittest.TestCase):

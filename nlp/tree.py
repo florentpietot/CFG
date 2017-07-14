@@ -153,22 +153,6 @@ def tree_from_string(string, grammar=None):
             trees.append(Tree(node=production))
     return trees
 
-def tree_from_grammar(grammar):
-    """ Returns a tree given a ``grammar``
-    """
-    trees = []
-    for production in grammar.productions(lhs=grammar.start()):
-        children = []
-        for rhs in production.rhs():
-            sub_prod = grammar.productions(lhs=rhs)
-        tree = Tree(node=production.lhs, children=Tree())
-        res = Tree("S",
-                   children=[
-                       Tree("NP", children=["N", ["D N"]]),
-                       Tree("VP", children="V")])
-    return tree
-
-
 def subtree_for_production(production, grammar):
     """ Recursively build subtrees for a given production
     """
@@ -194,5 +178,22 @@ def recursive_tree_from_start(grammar):
 
 def tree_from_production(production):
     """ Returns a tree from a ``production``
+
+        Examples:
+            Production: S -> NP VP
+            Returns:
+                Tree("S", [Tree("NP", []), Tree("VP", [])]) -> (S, (NP), (VP))
+
+            Production: N -> 'fall'
+            Returns:
+                Tree("N", ['fall']) - > (N, 'fall')
     """
-    return Tree(node=production.lhs(), children=production.rhs())
+    children = []
+    for rhs in production.rhs():
+        # TODO: clear this hack by creating a NonTerminal class
+        if rhs[0] is "\'":
+            print(rhs)
+            children.append(rhs)
+        else:
+            children.append(Tree(rhs, []))
+    return Tree(production.lhs(), children)
