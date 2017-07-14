@@ -29,33 +29,76 @@ class TestTopDownParserInit(unittest.TestCase):
                          "It should return the grammar")
 
 
-# class TestParse(TestTopDownParserInit):
+class TestSimpleParse(unittest.TestCase):
 
-#     def setUp(self):
-#         grammar_as_string = """
-#         S -> NP VP
-#         NP -> N | D N | Adj N | D Adj N
-#         VP -> V NP | V | V NP NP
-#         N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
-#         V -> 'spring' | 'leaves' | 'fall' | 'left'
-#         D -> 'the'
-#         Adj -> 'fall' | 'spring' | 'purple' | 'left'
-#         """
-#         self.grammar = Grammar.parse_grammar(grammar_as_string)
-#         self.parser = TopDownParser(self.grammar)
-#         self.tokens = ["fall", "leaves", "fall"]
+    def setUp(self):
+        grammar_as_string = """
+            NP -> D N | N
+            N -> 'leaves' | 'fall'
+            D -> 'the'
+        """
+        grammar = Grammar.parse_grammar(grammar_as_string)
+        self.parser = TopDownParser(grammar)
+        self.tokens = ["'fall'"]
 
-#     def test_parse(self):
-#         parse_1 = Tree("S",
-#                        [Tree("NP", [Tree("N", ["'fall'"])]),
-#                         Tree("VP", [Tree("V", ["'leaves'"]), Tree("N",
-#                                                                   ["'fall'"])])])
-#         parse_2 = Tree("S",
-#                        [Tree("NP", [Tree("Adj", ["'fall'"]),
-#                                     Tree("N",["'leaves'"])]),
-#                        Tree("VP", [Tree("V", ["'fall'"])])])
-#         res = [parse_1, parse_2]
-#         self.assertListEqual(res, self.parser.parse(self.tokens))
+    # def test_parse_with_empty_tokens_and_frontier(self):
+    #     """ It should return the tree """
+    #     tree = Tree("N", ["'leaves'"])
+    #     parse = self.parser._parse([], tree, [])
+    #     res = [tree]
+    #     self.assertEqual(res, [p for p in parse])
+
+    def test_parse(self):
+        for p in self.parser.parse(self.tokens):
+            if not isinstance(p, Tree):
+                next(p)
+            else:
+                print("Result: %s" % p)
+
+# class TestParse(unittest.TestCase):
+
+    # def setUp(self):
+    #     grammar_as_string = """
+    #     S -> NP VP
+    #     NP -> N | D N | Adj N | D Adj N
+    #     VP -> V NP | V | V NP NP
+    #     N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
+    #     V -> 'spring' | 'leaves' | 'fall' | 'left'
+    #     D -> 'the'
+    #     Adj -> 'fall' | 'spring' | 'purple' | 'left'
+    #     """
+    #     self.grammar = Grammar.parse_grammar(grammar_as_string)
+    #     self.parser = TopDownParser(self.grammar)
+    #     self.tokens = ["fall", "leaves", "fall"]
+
+    # def test_parse_with_no_tokens_and_no_frontier(self):
+    #     self.tokens = []
+    #     self.parser.parse(self.tokens)
+    #     res = Tree(self.parser.grammar().start(), [])
+    #     self.assertEqual(res, next(self.parser.parse(self.tokens)))
+
+    # def test_parse(self):
+    #     parse_1 = Tree("S",
+    #                    [Tree("NP", [Tree("N", ["'fall'"])]),
+    #                     Tree("VP", [Tree("V", ["'leaves'"]), Tree("N",
+    #                                                               ["'fall'"])])])
+    #     parse_2 = Tree("S",
+    #                    [Tree("NP", [Tree("Adj", ["'fall'"]),
+    #                                 Tree("N",["'leaves'"])]),
+    #                    Tree("VP", [Tree("V", ["'fall'"])])])
+    #     res = [parse_1, parse_2]
+    #     # self.assertEqual(res, self.parser.parse(self.tokens))
+
+    #     def go_through(generator):
+    #         for n in generator:
+    #             if not isinstance(n, Tree):
+    #                 go_through(next(n))
+
+    #     # go_through(self.parser.parse(self.tokens))
+    #     # print(next(self.parser.parse(self.tokens)))
+    #     # print(self.parser.parse(self.tokens))
+    #     for i in range(10):
+    #         print(next(self.parser.parse(self.tokens)))
 
 
 class TestExpandTree(unittest.TestCase):
@@ -66,7 +109,7 @@ class TestExpandTree(unittest.TestCase):
     def test_expand_start_tree(self):
         """ Expand a tree with only the starting point """
         self.tree = Tree("S", [])
-        self.frontier = []
+        self.frontier = [()]
         self.production = Production("S", ["NP", "VP"])
         res_tree = Tree("S", [Tree("NP", []), Tree("VP", [])])
         res_frontier = [(0, ), (1, )]
@@ -99,7 +142,7 @@ class Test_ExpandTree(unittest.TestCase):
     def test_expand_start_tree(self):
         """ Expand a tree with only the top node """
         self.tree = Tree("NP", [])
-        self.frontier = []
+        self.frontier = [()]
         res_trees = [Tree("NP", [Tree("N", [])]),
                      Tree("NP", [Tree("D", []), Tree("N", [])])]
         res_frontiers = [[(0, )], [(0, ), (1, )]]

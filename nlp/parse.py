@@ -25,7 +25,7 @@ class TopDownParser(object):
         """
         tokens = list(tokens)
         root_tree = Tree(self._grammar.start(), [])
-        frontier = []
+        frontier = [()]
         return self._parse(tokens, root_tree, frontier)
 
     def _parse(self, tokens, tree, frontier):
@@ -37,20 +37,44 @@ class TopDownParser(object):
                 initial_tree: starting ``tree``
                 frontier: ``list`` of candidates for expansion?
         """
+        print("Parsing: %s with frontier: %s for tokens: %s" % (tree,
+                                                                frontier,
+                                                                tokens))
         if len(tokens) == 0 and len(frontier) == 0:
-            # Found a match!
+            # Found a match
+            print("Match: %s" % tree)
             yield tree
+        elif len(frontier) == 0:
+            print("failed")
         else:
-            if len(frontier) == 0:
-                node = self.grammar().start()
-            else:
-                node = tree[frontier[0]]
-            if node in ['fall', 'leaves']:
+            if isinstance(tree[frontier[0]], Tree):
+                # Expand the tree at frontier
+                print("Expanding tree: %s" % tree[frontier[0]])
                 new_trees, new_frontiers = self._expand_tree(tree, frontier)
                 for new_tree, new_frontier in zip(new_trees, new_frontiers):
+                    # print("New tree: %s" % new_tree)
                     yield self._parse(tokens, new_tree, new_frontier)
             else:
-                yield tree
+                print("Terminal, let's see if match")
+                for new_tree, new_frontier in self._match(tokens, tree,
+                                                          frontier):
+                    yield (new_tree, new_frontier)
+
+    def _match(self, tokens, tree, frontier):
+        """ Match """
+        if len(tokens) > 0 and tree[frontier[0]] == tokens[0]:
+            print("Match: %s with: %s" % (tree[frontier[0]], tokens[0]))
+            newtree = tree.copy()
+            newtree[frontier[0]] = tokens[0]
+            for new_tree, new_frontier in self._parse(tokens[1:], newtree,
+                                                      frontier[1:]):
+                yield (new_tree, new_frontier)
+        # if len(tokens) > 0 and tree[frontier[0]] == tokens[0]:
+        #     # terminal matches, let's continue parsing
+        #     print("Match: %s with: %s" % (tree[frontier[0]], tokens[0]))
+        #     for new_tree, new_frontier in self._parse(tokens[1:], tree,
+        #                                               frontier[1:]):
+        #         yield (new_tree, new_frontier)
 
 
     def _expand_tree(self, tree, frontier):
@@ -83,7 +107,7 @@ class TopDownParser(object):
 
             Args:
                 tree: the ``tree`` to be expanded
-                frontier: the list of nodes candidates for expansion
+                frontier: the ``list`` of nodes candidates for expansion
                 production: production rule to follow in order to expand
 
             Examples:
@@ -96,7 +120,7 @@ class TopDownParser(object):
                     Frontier: [(0, 0), (0, 1), (1, )]
         """
         subtree = tree_from_production(production)
-        if len(frontier) == 0:
+        if frontier[0] == ():
             new_tree = subtree
             new_frontier = [(i, ) for i in range(len(production.rhs()))]
         else:
