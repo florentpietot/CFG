@@ -28,7 +28,7 @@ class TopDownParser(object):
         frontier = []
         return self._parse(tokens, root_tree, frontier)
 
-    def _parse(self, tokens, initial_tree, frontier):
+    def _parse(self, tokens, tree, frontier):
         # TODO: improve this docstring
         """ Recursively parse a list of tokens given a starting tree and a
             frontier of "to be expanded" nodes
@@ -37,19 +37,25 @@ class TopDownParser(object):
                 initial_tree: starting ``tree``
                 frontier: ``list`` of candidates for expansion?
         """
-        if len(frontier) == 0:
-            # TODO:
-            yield "TODO"
-        elif isinstance(frontier[0], Tree):
-            production = self.grammar().productions(lhs=frontier[0])
-            frontier = initial_tree.leaves()
-            self._expand(initial_tree, frontier[0])
-        # elif len(frontier) == 0:
-        #     yield tree
+        if len(tokens) == 0 and len(frontier) == 0:
+            # Found a match!
+            yield tree
+        else:
+            if len(frontier) == 0:
+                node = self.grammar().start()
+            else:
+                node = tree[frontier[0]]
+            if node in ['fall', 'leaves']:
+                new_trees, new_frontiers = self._expand_tree(tree, frontier)
+                for new_tree, new_frontier in zip(new_trees, new_frontiers):
+                    yield self._parse(tokens, new_tree, new_frontier)
+            else:
+                yield tree
+
 
     def _expand_tree(self, tree, frontier):
-        """ Expand a tree following this ``parser.grammar`` rules
-            Returns all possible trees by expanding the first element of
+        """ expand a tree following this ``parser.grammar`` rules
+            returns all possible trees by expanding the first element of
             frontier
         """
         trees = []
@@ -57,14 +63,20 @@ class TopDownParser(object):
         if len(frontier) > 0:
             node = tree[frontier[0]]
         else:
-            node = self.grammar().start()
-        for production in self.grammar().productions(lhs=node):
-            new_tree, new_frontier = self.expand_tree(tree, frontier,
-                                                      production)
-            trees.append(new_tree)
-            frontiers.append(new_frontier)
-        yield (trees, frontiers)
-
+            node = tree
+        if isinstance(node, Tree):
+            # Expand if node is a tree
+            for production in self.grammar().productions(lhs=node.node()):
+                # todo: should be a recursive call (transform method)
+                new_tree, new_frontier = self.expand_tree(tree, frontier,
+                                                          production)
+                trees.append(new_tree)
+                frontiers.append(new_frontier)
+        else:
+            # node can't be expanded (maybe it's a terminal)
+            trees.append(tree)
+            frontiers = [frontier[1:]]
+        return (trees, frontiers)
 
     def expand_tree(self, tree, frontier, production):
         """ Expand a tree from first element of a frontier given a production
