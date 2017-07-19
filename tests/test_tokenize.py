@@ -26,6 +26,12 @@ class TestTokenize(unittest.TestCase):
         self.assertEqual(res, tokenize(self.string),
                         msg="It should return list of words")
 
+    def test_removes_dot_at_end_of_sentence(self):
+        res = ["fall", "leaves", "fall"]
+        self.string += "."
+        self.assertEqual(res, tokenize(self.string),
+                        msg="It should remove the dot")
+
 
 if __name__ == "__main__":
     unittest.main()

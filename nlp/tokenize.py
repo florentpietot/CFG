@@ -16,5 +16,7 @@ def tokenize(string):
         Example:
             "Fall leaves fall" -> ["fall", "leaves", "fall"]
     """
+    if len(string) > 0 and string[-1] == '.':
+        string = string[:-1]
     tokens = string.lower().split()
     return tokens
