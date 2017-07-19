@@ -5,6 +5,7 @@
 """ Basic tree model we will use for parsing sentences given a ``grammar``
 """
 
+import copy
 from nlp.tokenize import tokenize
 
 class Tree(list):
@@ -118,8 +119,11 @@ class Tree(list):
             raise TypeError("Index must be an integer, or a slice/list/tuple \
                             of integers")
 
-    def copy(self):
-        return Tree(self._node, list(self))
+    def copy(self, deep=False):
+        if deep:
+            return copy.deepcopy(self)
+        return copy.copy(self)
+        # return Tree(self._node, list(self[:]))
 
     def contains(self, elem):
         pass
@@ -156,25 +160,10 @@ def tree_from_string(string, grammar=None):
 def subtree_for_production(production, grammar):
     """ Recursively build subtrees for a given production
     """
-    # children = []
-    # for rhs in production.rhs():
-    #     # get list of expansions
-    #     productions = grammar.productions(lhs=rhs) ## <- list
-    #     children.append(subtree_for_production())
     return Tree(node=production.lhs(),
                 children=[subtree_for_production(production) for production in
                           grammar.productions(lhs=production.rhs())])
 
-def tree_for_children(grammar, production):
-    for rhs in production.rhs():
-        pass
-
-def recursive_tree_from_production(production):
-    pass
-
-def recursive_tree_from_start(grammar):
-
-    pass
 
 def tree_from_production(production):
     """ Returns a tree from a ``production``

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
@@ -6,7 +6,7 @@
 """
 
 import unittest
-from nlp.tree import Tree
+from nlp.tree import Tree, tree_from_production
 from nlp.parse import TopDownParser
 from nlp.grammar import Grammar, Production
 
@@ -22,160 +22,149 @@ class TestTopDownParserInit(unittest.TestCase):
         self.grammar = Grammar.parse_grammar(grammar_as_string)
         self.parser = TopDownParser(self.grammar)
 
-    def test_grammar(self):
+    def test_returns_grammar(self):
         """ Check it returns the ``grammar`` param properly """
         res = self.parser.grammar()
         self.assertEqual(res, self.parser.grammar(),
                          "It should return the grammar")
 
 
-class TestSimpleParse(unittest.TestCase):
+class TestParse(unittest.TestCase):
 
     def setUp(self):
         grammar_as_string = """
-            NP -> D N | N
-            N -> 'leaves' | 'fall'
+            S -> NP VP
+            NP -> N | D N | Adj N | D Adj N
+            VP -> V NP | V |V NP NP
+            N -> 'fall' | 'spring' | 'leaves'
+            V -> 'spring' | 'leaves' | 'fall'
             D -> 'the'
+            Adj -> 'fall' | 'spring' | 'purple'
         """
         grammar = Grammar.parse_grammar(grammar_as_string)
         self.parser = TopDownParser(grammar)
-        self.tokens = ["'fall'"]
 
-    # def test_parse_with_empty_tokens_and_frontier(self):
-    #     """ It should return the tree """
-    #     tree = Tree("N", ["'leaves'"])
-    #     parse = self.parser._parse([], tree, [])
-    #     res = [tree]
-    #     self.assertEqual(res, [p for p in parse])
+    def test_non_parsable(self):
+        tokens = ["hello", "world"]
+        with self.assertRaises(StopIteration):
+            next(self.parser.parse(tokens))
 
-    def test_parse(self):
-        for p in self.parser.parse(self.tokens):
-            if not isinstance(p, Tree):
-                next(p)
-            else:
-                print("Result: %s" % p)
+    def test_one_parse(self):
+        print("============================")
+        print("Test one parse")
+        tokens = ["fall", "leaves"]
+        res = Tree("S", [Tree("NP", [Tree("N", ["'fall'"])]),
+                         Tree("VP", [Tree("V", ["'leaves'"])])])
+        parse = self.parser.parse(tokens)
+        self.assertEqual(res, next(parse)[0])
+        print("============================")
 
-# class TestParse(unittest.TestCase):
+    def test_multiple_parse(self):
+        pass
 
-    # def setUp(self):
-    #     grammar_as_string = """
-    #     S -> NP VP
-    #     NP -> N | D N | Adj N | D Adj N
-    #     VP -> V NP | V | V NP NP
-    #     N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
-    #     V -> 'spring' | 'leaves' | 'fall' | 'left'
-    #     D -> 'the'
-    #     Adj -> 'fall' | 'spring' | 'purple' | 'left'
-    #     """
-    #     self.grammar = Grammar.parse_grammar(grammar_as_string)
-    #     self.parser = TopDownParser(self.grammar)
-    #     self.tokens = ["fall", "leaves", "fall"]
-
-    # def test_parse_with_no_tokens_and_no_frontier(self):
-    #     self.tokens = []
-    #     self.parser.parse(self.tokens)
-    #     res = Tree(self.parser.grammar().start(), [])
-    #     self.assertEqual(res, next(self.parser.parse(self.tokens)))
-
-    # def test_parse(self):
-    #     parse_1 = Tree("S",
-    #                    [Tree("NP", [Tree("N", ["'fall'"])]),
-    #                     Tree("VP", [Tree("V", ["'leaves'"]), Tree("N",
-    #                                                               ["'fall'"])])])
-    #     parse_2 = Tree("S",
-    #                    [Tree("NP", [Tree("Adj", ["'fall'"]),
-    #                                 Tree("N",["'leaves'"])]),
-    #                    Tree("VP", [Tree("V", ["'fall'"])])])
-    #     res = [parse_1, parse_2]
-    #     # self.assertEqual(res, self.parser.parse(self.tokens))
-
-    #     def go_through(generator):
-    #         for n in generator:
-    #             if not isinstance(n, Tree):
-    #                 go_through(next(n))
-
-    #     # go_through(self.parser.parse(self.tokens))
-    #     # print(next(self.parser.parse(self.tokens)))
-    #     # print(self.parser.parse(self.tokens))
-    #     for i in range(10):
-    #         print(next(self.parser.parse(self.tokens)))
-
-
-class TestExpandTree(unittest.TestCase):
+class TestPrivateParse(unittest.TestCase):
 
     def setUp(self):
-        self.parser = TopDownParser(Grammar("S", []))
-
-    def test_expand_start_tree(self):
-        """ Expand a tree with only the starting point """
+        grammar_as_string = """
+            S -> NP VP
+            NP -> N | D N | Adj N | D Adj N
+            VP -> V NP | V |V NP NP
+            N -> 'fall' | 'spring' | 'leaves'
+            V -> 'spring' | 'leaves' | 'fall'
+            D -> 'the'
+            Adj -> 'fall' | 'spring' | 'purple'
+        """
+        grammar = Grammar.parse_grammar(grammar_as_string)
+        self.parser = TopDorwnParser(grammar)
         self.tree = Tree("S", [])
+        self.tokens = ["'fall'", "'leaves'", "'fall'"]
         self.frontier = [()]
-        self.production = Production("S", ["NP", "VP"])
-        res_tree = Tree("S", [Tree("NP", []), Tree("VP", [])])
-        res_frontier = [(0, ), (1, )]
-        res = (res_tree, res_frontier)
-        self.assertEqual(res, self.parser.expand_tree(self.tree, self.frontier,
-                                                      self.production))
 
-    def test_expand_tree(self):
-        self.tree = Tree("S", ["NP", "VP"])
-        self.frontier = [(0, ), (1, )]
-        self.production = Production("NP", ["D", "N"])
-        res_tree = Tree("S", [Tree("NP", [Tree("D", []), Tree("N", [])]), "VP"])
-        res_frontier = [(0, 0), (0, 1), (1, )]
-        res = (res_tree, res_frontier)
-        self.assertEqual(res, self.parser.expand_tree(self.tree, self.frontier,
-                                                      self.production))
+    def test_parse_with_final_match(self):
+        self.tree = Tree("N", ["'fall'"])
+        self.tokens = ["fall"]
+        self.frontier = [(0, )]
+        res = self.tree
+        parse = self.parser._parse(self.tokens, self.tree, self.frontier)
+        new_tree, new_frontier = next(parse)
+        self.assertListEqual(res, new_tree)
 
-
-class Test_ExpandTree(unittest.TestCase):
+class TestMatch(unittest.TestCase):
+    """ Tests for TopDownParser()._match(tokens, tree, frontier)
+    """
 
     def setUp(self):
         grammar_as_string = """
             NP -> N | D N
-            N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
+            N -> 'fall' | 'spring' | 'leaves'
+            D -> 'the'
+        """
+        grammar = Grammar.prarse_grammar(grammar_as_string)
+        self.parser = TopDownParser(grammar)
+        self.tree = Tree("NP", [Tree("D", []), Tree("N", [])])
+        self.frontier = [(0, ), (1, )]
+        self.tokens = ["'the'", "'fall'"]
+
+    def test_tokens_is_empty(self):
+        self.tokens = []
+        with self.assertRaises(ValueError):
+            next(self.parser._match(self.tokens, self.tree, self.frontier))
+
+    def test_frontier_is_empty(self):
+        self.frontier = []
+        with self.assertRaises(ValueError):
+            next(self.parser._match(self.tokens, self.tree, self.frontier))
+
+    def test_frontier_is_not_a_match(self):
+        """ Should yield nothing """
+        self.tree[self.frontier[0]].append("'a'")
+        self.frontier = [(0, 0), (1, )]
+        with self.assertRaises(StopIteration):
+            next(self.parser._match(self.tokens, self.tree, self.frontier))
+
+
+class TestExpand(unittest.TestCase):
+    """ Test parse._expand(tree, frontier)
+        Hence, multiple productions candidates are possible
+        That means the function can yield more than one (tree, frontier)
+    """
+
+    def setUp(self):
+        grammar_as_string = """
+            NP -> N | D N
+            N -> 'fall' | 'srpring' | 'leaves'
             D -> 'the'
         """
         grammar = Grammar.parse_grammar(grammar_as_string)
         self.parser = TopDownParser(grammar)
+        self.tokens = ["hello", "world"]
 
-    def test_expand_start_tree(self):
-        """ Expand a tree with only the top node """
-        self.tree = Tree("NP", [])
-        self.frontier = [()]
-        res_trees = [Tree("NP", [Tree("N", [])]),
-                     Tree("NP", [Tree("D", []), Tree("N", [])])]
-        res_frontiers = [[(0, )], [(0, ), (1, )]]
-        res = (res_trees, res_frontiers)
-        trees, frontiers = self.parser._expand_tree(self.tree, self.frontier)
-        self.assertListEqual(res_trees, trees, "Trees are not equal")
-        self.assertListEqual(res_frontiers, frontiers, "Frontiers are not \
-                             equal")
+    def test_expand_with_empty_frontier(self):
+        """ Assert ValueError is raised if frontier is empty """
+        tree = Tree("S", [])
+        frontier = []
+        with self.assertRaises(ValueError):
+            next(self.parser._expand(self.tokens, tree, frontier))
 
-    def test_expand_tree(self):
-        """ Expand a tree """
-        self.tree = Tree("NP", [Tree("D", []), Tree("N", [])])
-        self.frontier = [(0, ), (1, )]
-        res_trees = [Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])]
-        res_frontiers = [[(0, 0), (1, )]]
-        trees, frontiers = self.parser._expand_tree(self.tree, self.frontier)
-        self.assertListEqual(res_trees, trees, "Trees are not equal")
-        self.assertListEqual(res_frontiers, frontiers, "Frontiers are not\
-                             equal")
+    # #TODO: Can't test this because of recursions
+    # def test_expand_into_a_single_tree(self):
+    #     """ Single expand """
+    #     tree = Tree("NP", [Tree("D", []), Tree("N", [])])
+    #     frontier = [(0, ), (1, )]
+    #     res_tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
+    #     res_frontier = [(0, 0), (1, )]
+    #     res = (res_tree, res_frontier)
+    #     self.tokens = ["the", "fall"]
+    #     parse = self.parser._expand(self.tokens, tree, frontier)
+    #     self.assertTupleEqual(res, next(parse))
 
     def test_expand_non_expandable(self):
-        """ Expand a tree where the frontier is not an expandable node
-            It should return the same tree and the frontier without first
-            element
-        """
-        self.tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
-        self.frontier = [(0, 0), (1, )]
-        res_trees = [self.tree]
-        res_frontiers = [[(1, )]]
-        trees, frontiers = self.parser._expand_tree(self.tree, self.frontier)
-        self.assertListEqual(res_trees, trees, "Trees should be the same")
-        self.assertListEqual(res_frontiers, frontiers, "Frontiers should be \
-                             the same")
+        """ It should return a StopIteration error """
+        tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
+        frontier = [(0, 0), (1, )]
+        parse = self.parser._expand(self.tokens, tree, frontier)
+        with self.assertRaises(StopIteration):
+            next(self.parser._expand(self.tokens, tree, frontier))
 
 
 if __name__ == "__main__":
