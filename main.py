@@ -4,11 +4,14 @@
 
 from nlp.grammar import Production, Grammar
 from nlp.tree import Tree, tree_from_production
+from nlp.parse import TopDownParser
+from nlp.tokenize import tokenize
 
 if __name__ == "__main__":
 
     grammar_as_string = """
-        S -> NP VP | S C S
+        ST -> S | S C S
+        S -> NP VP
         NP -> N | D N | Adj N | D Adj N
         VP -> V NP | V | V NP NP
         N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
@@ -18,6 +21,16 @@ if __name__ == "__main__":
         Adj -> 'fall' | 'spring' | 'purple' | 'left'
     """
 
+    # grammar_as_string = """
+    #     S -> NP VP
+    #     NP -> N | D N | Adj N | D Adj N
+    #     VP -> V NP | V | V NP NP
+    #     N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
+    #     V -> 'spring' | 'leaves' | 'fall' | 'left'
+    #     D -> 'the'
+    #     Adj -> 'fall' | 'spring' | 'purple' | 'left'
+    # """
+
     sentences = [
         "Fall leaves fall.",
         "Fall leaves fall and spring leaves spring.",
@@ -26,3 +39,14 @@ if __name__ == "__main__":
         "The dog and cat left"
     ]
 
+    grammar = Grammar.parse_grammar(grammar_as_string)
+    parser = TopDownParser(grammar)
+    tokens = tokenize(sentences[4])
+    for sentence in sentences:
+        tokens = tokenize(sentence)
+        parse = parser.parse(tokens)
+        results = [p for p in parse]
+        print("==========================")
+        print(sentence)
+        print(results)
+        print("Count: %d" % len(results))
