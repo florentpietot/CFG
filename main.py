@@ -38,5 +38,8 @@ if __name__ == "__main__":
         results = [p for p in parse]
         print("==========================")
         print(sentence)
-        print(results)
+        print("--------------------------")
+        for index, parse in enumerate(results):
+            print("Parse #%d:\n%s" % (index, parse))
+        print("--------------------------")
         print("Count: %d" % len(results))
