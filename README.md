@@ -2,7 +2,7 @@
 
 After following Udacity's Intro to Artificial Intelligence (by Peter Norvig and
 Sebastian Thrun) a few months ago: (https://www.udacity.com/course/intro-to-artificial-intelligence--cs271)
-I recently realized I forgot to finish a couple of exercises in the final assignment. Given I had followed this course on my own, it wasn't a big deal, but decided to do them for the sake of it. Of those exercises, one was quite easy to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and it would serve as a nice pretext for getting more familiar 
+I recently realized I had forgotten to finish a couple of exercises in the final assignment. Given I had followed this course on my own, it wasn't a big deal, but decided to do them for the sake of it. Of those exercises, one was quite easy to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and it would serve as a nice pretext for getting more familiar 
 
 ![Grammar exercice from Udacity's intro to Artificial Intelligence](/screenshots/grammar-exercice.png?raw=true "Grammar exercice from Udacity's intro to artificial intelligence")
 
