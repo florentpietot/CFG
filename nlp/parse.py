@@ -11,11 +11,12 @@ from nlp.tokenize import tokenize
 
 class TopDownParser(object):
 
-    def __init__(self, grammar):
+    def __init__(self, grammar, verbose=0):
         """ params:
             grammar: a ``grammar`` object that states rules for the parsing
         """
         self._grammar = grammar
+        self._verbose = verbose
 
     def grammar(self):
         return self._grammar
@@ -44,9 +45,10 @@ class TopDownParser(object):
                 initial_tree: starting ``tree``
                 frontier: ``list`` of candidates for expansion?
         """
-        print("Parsing: %s with frontier: %s for tokens: %s" % (tree,
-                                                                frontier,
-                                                                tokens))
+        if self._verbose >= 1:
+            print("Parsing: %s with frontier: %s for tokens: %s" % (tree,
+                                                                    frontier,
+                                                                    tokens))
         if len(tokens) == 0 and len(frontier) == 0:
             # Found a match
             yield (tree, frontier)
@@ -71,13 +73,14 @@ class TopDownParser(object):
         if len(frontier) == 0:
             raise ValueError("`frontier` requires at least one element")
 
-        print("Matching %s with frontier %s and tokens %s" % (tree, frontier,
-                                                              tokens))
+        if self._verbose >= 1:
+            print("Matching %s with frontier %s and tokens %s" % (tree,
+                                                                  frontier,
+                                                                  tokens))
 
         # TODO: clean this dirty hack. Maybe create Terminal class?
         if len(tokens) > 0 and tree[frontier[0]][1:-1] == tokens[0]:
             newtree = tree.copy(deep=True)
-            print("Tokens: %s" % tokens)
             for new_tree, new_frontier in self._parse(tokens[1:], newtree,
                                                       frontier[1:]):
                 yield (new_tree, new_frontier)
@@ -92,7 +95,8 @@ class TopDownParser(object):
         if len(frontier) == 0:
             raise ValueError("Frontier requires at least one element")
 
-        print("Expanding %s at subtree %s" % (tree, tree[frontier[0]]))
+        if self._verbose >= 1:
+            print("Expanding %s at subtree %s" % (tree, tree[frontier[0]]))
 
         if isinstance(tree[frontier[0]], Tree):
             for production in self.grammar().productions():
