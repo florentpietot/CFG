@@ -30,6 +30,7 @@ class TestTopDownParserInit(unittest.TestCase):
 
 
 class TestParse(unittest.TestCase):
+    """ Tests for public parse function """
 
     def setUp(self):
         grammar_as_string = """
@@ -45,22 +46,40 @@ class TestParse(unittest.TestCase):
         self.parser = TopDownParser(grammar)
 
     def test_non_parsable(self):
+        """ Test when the list of tokens cannot find a parse
+            for this grammar
+        """
         tokens = ["hello", "world"]
         with self.assertRaises(StopIteration):
             next(self.parser.parse(tokens))
 
     def test_one_parse(self):
-        print("============================")
-        print("Test one parse")
+        """ Test when there is only one parse that will fit
+            the tokens
+        """
         tokens = ["fall", "leaves"]
         res = Tree("S", [Tree("NP", [Tree("N", ["'fall'"])]),
                          Tree("VP", [Tree("V", ["'leaves'"])])])
         parse = self.parser.parse(tokens)
         self.assertEqual(res, next(parse)[0])
-        print("============================")
 
     def test_multiple_parse(self):
-        pass
+        """ Test when there is more than one possible parse
+            for the tokens given the grammar
+        """
+        tokens = ["fall", "leaves", "fall"]
+        tree_1 = Tree("S",
+                      [Tree("NP", [Tree("N", ["'fall'"])]),
+                       Tree("VP", [Tree("V", ["'leaves'"]),
+                                   Tree("NP", [Tree("N", ["'fall'"])])])])
+        tree_2 = Tree("S",
+                      [Tree("NP", [Tree("Adj", ["'fall'"]),
+                                   Tree("N", ["'leaves'"])]),
+                       Tree("VP", [Tree("V", ["'fall'"])])])
+        res = [(tree_1, []), (tree_2, [])]
+        parse = self.parser.parse(tokens)
+        self.assertListEqual(res, [p for p in parse])
+
 
 class TestPrivateParse(unittest.TestCase):
 
@@ -116,7 +135,6 @@ class TestMatch(unittest.TestCase):
             next(self.parser._match(self.tokens, self.tree, self.frontier))
 
     def test_frontier_is_not_a_match(self):
-        """ Should yield nothing """
         self.tree[self.frontier[0]].append("'a'")
         self.frontier = [(0, 0), (1, )]
         with self.assertRaises(StopIteration):
@@ -124,7 +142,7 @@ class TestMatch(unittest.TestCase):
 
 
 class TestExpand(unittest.TestCase):
-    """ Test parse._expand(tree, frontier)
+    """ Test parse._expand(tokens, tree, frontier)
         Hence, multiple productions candidates are possible
         That means the function can yield more than one (tree, frontier)
     """
@@ -145,18 +163,6 @@ class TestExpand(unittest.TestCase):
         frontier = []
         with self.assertRaises(ValueError):
             next(self.parser._expand(self.tokens, tree, frontier))
-
-    # #TODO: Can't test this because of recursions
-    # def test_expand_into_a_single_tree(self):
-    #     """ Single expand """
-    #     tree = Tree("NP", [Tree("D", []), Tree("N", [])])
-    #     frontier = [(0, ), (1, )]
-    #     res_tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
-    #     res_frontier = [(0, 0), (1, )]
-    #     res = (res_tree, res_frontier)
-    #     self.tokens = ["the", "fall"]
-    #     parse = self.parser._expand(self.tokens, tree, frontier)
-    #     self.assertTupleEqual(res, next(parse))
 
     def test_expand_non_expandable(self):
         """ It should return a StopIteration error """
