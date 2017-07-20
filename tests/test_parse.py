@@ -75,7 +75,7 @@ class TestPrivateParse(unittest.TestCase):
             Adj -> 'fall' | 'spring' | 'purple'
         """
         grammar = Grammar.parse_grammar(grammar_as_string)
-        self.parser = TopDorwnParser(grammar)
+        self.parser = TopDownParser(grammar)
         self.tree = Tree("S", [])
         self.tokens = ["'fall'", "'leaves'", "'fall'"]
         self.frontier = [()]
@@ -99,7 +99,7 @@ class TestMatch(unittest.TestCase):
             N -> 'fall' | 'spring' | 'leaves'
             D -> 'the'
         """
-        grammar = Grammar.prarse_grammar(grammar_as_string)
+        grammar = Grammar.parse_grammar(grammar_as_string)
         self.parser = TopDownParser(grammar)
         self.tree = Tree("NP", [Tree("D", []), Tree("N", [])])
         self.frontier = [(0, ), (1, )]
