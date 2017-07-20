@@ -10,7 +10,7 @@ from nlp.tokenize import tokenize
 if __name__ == "__main__":
 
     grammar_as_string = """
-        ST -> S | S C S
+        S0 -> S | S C S
         S -> NP VP
         NP -> N | D N | Adj N | D Adj N
         VP -> V NP | V | V NP NP
@@ -20,16 +20,6 @@ if __name__ == "__main__":
         C -> 'and'
         Adj -> 'fall' | 'spring' | 'purple' | 'left'
     """
-
-    # grammar_as_string = """
-    #     S -> NP VP
-    #     NP -> N | D N | Adj N | D Adj N
-    #     VP -> V NP | V | V NP NP
-    #     N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
-    #     V -> 'spring' | 'leaves' | 'fall' | 'left'
-    #     D -> 'the'
-    #     Adj -> 'fall' | 'spring' | 'purple' | 'left'
-    # """
 
     sentences = [
         "Fall leaves fall.",
