@@ -84,7 +84,8 @@ class TestGrammar(unittest.TestCase):
         """ Should return the verbose representation of the ``grammar`` as a
         string
         """
-        res = ("Grammar starting with: \"%s\"\n2 productions:\nNP -> N\nNP -> D N"
+        res = ("Grammar starting with: \"%s\"\n"
+               "2 productions:\nNP -> N\nNP -> D N"
                % (self.grammar.start()))
         self.assertEqual(res, str(self.grammar))
 
