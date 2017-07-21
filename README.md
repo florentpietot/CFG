@@ -1,7 +1,6 @@
 # Basic Context-Free Grammar
 
-After following Udacity's Intro to Artificial Intelligence (by Peter Norvig and
-Sebastian Thrun) a few months ago: (https://www.udacity.com/course/intro-to-artificial-intelligence--cs271).
+A few months ago, I followed Udacity's [Intro to Artificial Intelligence](https://www.udacity.com/course/intro-to-artificial-intelligence--cs271) by Peter Norvig and Sebastian Thrun.
 
 I realized I had forgotten to finish a couple of exercises in the final assignment. One of those exercises wasn't difficult to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and python's unittest module.
 
