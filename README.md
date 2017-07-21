@@ -1,8 +1,11 @@
 # Basic Context-Free Grammar
 
 After following Udacity's Intro to Artificial Intelligence (by Peter Norvig and
-Sebastian Thrun) a few months ago: (https://www.udacity.com/course/intro-to-artificial-intelligence--cs271)
-I recently realized I had forgotten to finish a couple of exercises in the final assignment. Given I had followed this course on my own, it wasn't a big deal, but decided to do them for the sake of it. Of those exercises, one was quite easy to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and it would serve as a nice pretext for getting more familiar 
+Sebastian Thrun) a few months ago: (https://www.udacity.com/course/intro-to-artificial-intelligence--cs271).
+
+I realized I had forgotten to finish a couple of exercises in the final assignment. One of those exercises wasn't difficult to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and python's unittest module.
+
+## Exercise
 
 ![Grammar exercice from Udacity's intro to Artificial Intelligence](/screenshots/grammar-exercice.png?raw=true "Grammar exercice from Udacity's intro to artificial intelligence")
 
@@ -10,22 +13,27 @@ I recently realized I had forgotten to finish a couple of exercises in the final
 Create a TopDownParser object given a grammar. This grammar can be initialized
 through Grammar.parse_grammar() which will parse a grammar given in a string
 form.
+
 Example of a grammar as a string form:
+    
     grammar_as_string = """
-    S -> NP VP,
+    S -> NP VP,\n
     NP -> N | D N,
     VP -> V | V NP,
     N -> 'fall' | 'leaves' | 'spring',
     D -> 'the'
     """
-The left-hand side of the first encountered production will be used a the
-starting point for the grammar.
+
+The left-hand side of the first encountered production will be used 
+as the starting point for the grammar.
 
 Let's init a grammar object with this grammar as a string:
-grammar = Grammar.parse_grammar(grammar_as_string)
+    
+    grammar = Grammar.parse_grammar(grammar_as_string)
 
 Then create a TopDownParser from this grammar:
-parser = TopDownParser(grammar)
+    
+    parser = TopDownParser(grammar)
 
 ## Limitations
 This code won't handle grammars in Non-Chomsky form, in particular it won't
@@ -69,4 +77,4 @@ That was quite a good introduction to low-level NLP concepts for me. NLP is a
 pretty dense topic, with all kind of specific vocabulary, etc...
 
 ## Contact
-You can contact me at florent.pietot[dot]gmail.com
+You can contact me at florent.pietot[at]gmail.com
