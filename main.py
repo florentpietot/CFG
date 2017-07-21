@@ -2,8 +2,7 @@
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
-from nlp.grammar import Production, Grammar
-from nlp.tree import Tree, tree_from_production
+from nlp.grammar import Grammar
 from nlp.parse import TopDownParser
 from nlp.tokenize import tokenize
 

@@ -6,9 +6,10 @@
 """
 
 import unittest
-from nlp.tree import Tree, tree_from_production
+from nlp.tree import Tree
 from nlp.parse import TopDownParser
-from nlp.grammar import Grammar, Production
+from nlp.grammar import Grammar
+
 
 class TestTopDownParserInit(unittest.TestCase):
     """ Init tests """
@@ -101,6 +102,7 @@ class TestPrivateParse(unittest.TestCase):
         new_tree, new_frontier = next(parse)
         self.assertListEqual(res, new_tree)
 
+
 class TestMatch(unittest.TestCase):
     """ Tests for TopDownParser()._match(tokens, tree, frontier)
     """
@@ -165,7 +167,6 @@ class TestExpand(unittest.TestCase):
     def test_expand_non_expandable(self):
         tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
         frontier = [(0, 0), (1, )]
-        parse = self.parser._expand(self.tokens, tree, frontier)
         with self.assertRaises(StopIteration):
             next(self.parser._expand(self.tokens, tree, frontier))
 

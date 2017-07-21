@@ -8,9 +8,9 @@
 import copy
 from nlp.tokenize import tokenize
 
+
 class Tree(list):
-    """ Tree model for building a tree of productions
-        Each node is a production
+    """ Tree model
     """
 
     def __init__(self, node, children=None):
@@ -62,8 +62,8 @@ class Tree(list):
         """ Return True if this ``Tree`` is equal to ``other``.
         """
         return (type(self) == type(other) and
-               self._node  == other._node and
-               list(self) == list(other))
+                self._node == other._node and
+                list(self) == list(other))
 
     def __ne__(self, other):
         """ Return True if this ``Tree`` is not equal to ``other``.
@@ -156,6 +156,7 @@ def tree_from_string(string, grammar=None):
         if token in production.rhs():
             trees.append(Tree(node=production))
     return trees
+
 
 def subtree_for_production(production, grammar):
     """ Recursively build subtrees for a given production

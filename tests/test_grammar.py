@@ -34,7 +34,7 @@ class TestProduction(unittest.TestCase):
         self.assertIsInstance(production.rhs(), tuple)
 
     def test_str(self):
-        #TODO: handle terminals
+        # TODO: handle terminals
         res = "S -> NP VP"
         self.assertEqual(res, str(self.production))
 
@@ -46,6 +46,8 @@ class TestProduction(unittest.TestCase):
     def test_ne(self):
         """ Test inequality """
         other = Production("NP", ["N"])
+        self.assertNotEqual(self, other)
+
 
 class TestParseProduction(unittest.TestCase):
 
@@ -119,7 +121,6 @@ class TestGrammarProductions(unittest.TestCase):
         self.assertEqual(res, self.grammar.productions(),
                          msg=("Should return all ``productions``\
                               of this``grammar``"))
-
 
     def test_standard_use_case(self):
         res = self.productions[:2]
