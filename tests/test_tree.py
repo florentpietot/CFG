@@ -38,9 +38,8 @@ class TestTree(unittest.TestCase):
         self.assertIsInstance(str(self.tree), str, msg="String expected")
 
     def test_str(self):
-        # TODO: change this, this is bad
-        res = ("(root_node, (child_1, grandchild_1, grandchild_2,\
-               grandchild_3), (child_2), child_3)")
+        res = ("(root_node, (child_1, grandchild_1, grandchild_2, "
+               "grandchild_3), (child_2), child_3)")
         self.assertEqual(res, str(self.tree))
 
     def test_repr_is_string(self):
