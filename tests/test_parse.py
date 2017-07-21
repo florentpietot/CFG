@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
