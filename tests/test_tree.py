@@ -6,8 +6,9 @@
 """
 
 import unittest
-from nlp.tree import (Tree, tree_from_string, tree_from_production)
-from nlp.grammar import Production, Grammar
+from nlp.tree import (Tree, tree_from_production)
+from nlp.grammar import Production
+
 
 class TestTree(unittest.TestCase):
     """ Basic tests for instantiation of ``tree``
@@ -38,7 +39,8 @@ class TestTree(unittest.TestCase):
 
     def test_str(self):
         # TODO: change this, this is bad
-        res = "(root_node, (child_1, grandchild_1, grandchild_2, grandchild_3), (child_2), child_3)"
+        res = ("(root_node, (child_1, grandchild_1, grandchild_2,\
+               grandchild_3), (child_2), child_3)")
         self.assertEqual(res, str(self.tree))
 
     def test_repr_is_string(self):
@@ -54,7 +56,9 @@ class TestTree(unittest.TestCase):
 
     def test_len(self):
         res = 3
-        self.assertEqual(res, len(self.tree), "Lenght of tree should be equal to 6")
+        self.assertEqual(res, len(self.tree),
+                         "Length of tree should be equal to 6")
+
 
 class TestGetItem(unittest.TestCase):
     """ Test case for __getitem__
@@ -63,12 +67,13 @@ class TestGetItem(unittest.TestCase):
     def setUp(self):
         self.node = "node"
         self.child_1 = Tree(node="child_1", children=["grandchild_1",
-                                                "grandchild_2",
-                                                "grandchild_3"])
+                                                      "grandchild_2",
+                                                      "grandchild_3"])
         self.child_2 = Tree(node="child_2")
         self.child_3 = "child_3"
         self.tree = Tree(node=self.node, children=[self.child_1, self.child_2,
                                                    self.child_3])
+
     def test_get_no_index(self):
         """ Test for when index is empty tuple/array """
         res = self.tree
@@ -87,6 +92,7 @@ class TestGetItem(unittest.TestCase):
         res = "grandchild_2"
         self.assertEqual(res, self.tree[(0, 1)])
         self.assertEqual(res, self.tree[[0, 1]])
+
 
 class TestSetItems(unittest.TestCase):
     """ Test __setitem__ for our ``tree`` class
@@ -117,11 +123,6 @@ class TestSetItems(unittest.TestCase):
         self.tree[index] = self.new_child
         self.assertEqual(res, self.tree)
 
-    # def test_set_empty_index(self):
-    #     """ Test when the index is an empty array or tuple """
-    #     index = []
-    #     self.tree[index] = self.new_child
-
 
 class TestLeaves(unittest.TestCase):
     """ Test case for getting the leaves from a ``tree``
@@ -130,8 +131,8 @@ class TestLeaves(unittest.TestCase):
     def setUp(self):
         self.node = "node"
         self.child_1 = Tree(node="child_1", children=["grandchild1-1",
-                                                "grandchild1-2",
-                                                "grandchild1-3"])
+                                                      "grandchild1-2",
+                                                      "grandchild1-3"])
         self.child_2 = Tree(node="child_2")
         self.child_3 = "child_3"
         self.tree = Tree(node=self.node, children=[self.child_1, self.child_2,
@@ -144,14 +145,6 @@ class TestLeaves(unittest.TestCase):
         res.append(self.child_2.node())
         res.append(self.child_3)
         self.assertEqual(res, self.tree.leaves())
-
-
-class TestAddChild(unittest.TestCase):
-    pass
-
-
-class TestTreeFromString(unittest.TestCase):
-    pass
 
 
 class TestTreeFromProduction(unittest.TestCase):
@@ -170,40 +163,6 @@ class TestTreeFromProduction(unittest.TestCase):
         res = Tree("N", ["'fall'"])
         self.assertEqual(res, tree_from_production(self.production))
 
-class TestTreeFromGrammar(unittest.TestCase):
-    """ Test case for creating trees from ``grammar``
-    """
 
-    def setUp(self):
-        grammar_as_string = """
-            S -> NP VP
-            NP -> N
-            VP -> V NP | V
-            N -> 'fall' | 'spring' | 'leaves' | 'dog' | 'cat'
-            V -> 'spring' | 'leaves' | 'fall' | 'left'
-        """
-        self.grammar = Grammar.parse_grammar(grammar_as_string)
-
-
-class TestSubtreeFromProduction(unittest.TestCase):
-
-    def setUp(self):
-        productions = [
-            Production("S", ["NP", "VP"]),
-            Production("NP", ["N"]),
-            Production("NP", ["D", "N"]),
-            Production("VP", ["V"]),
-            Production("VP", ["V", "N"])
-        ]
-        self.grammar = Grammar("S", productions)
-
-    def test_subtree_from_production(self):
-        # get a random start production
-        res = Tree("S", children=[
-            Tree("NP", children=["N", ["D N"]]),
-            Tree("VP", children="V")])
-        start_prod = self.grammar.productions(self.grammar.start())[0]
-
-
-if  __name__ == "__main__":
+if __name__ == "__main__":
     unittest.main()

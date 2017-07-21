@@ -6,9 +6,10 @@
 """
 
 import unittest
-from nlp.tree import Tree, tree_from_production
+from nlp.tree import Tree
 from nlp.parse import TopDownParser
-from nlp.grammar import Grammar, Production
+from nlp.grammar import Grammar
+
 
 class TestTopDownParserInit(unittest.TestCase):
     """ Init tests """
@@ -23,7 +24,6 @@ class TestTopDownParserInit(unittest.TestCase):
         self.parser = TopDownParser(self.grammar)
 
     def test_returns_grammar(self):
-        """ Check it returns the ``grammar`` param properly """
         res = self.parser.grammar()
         self.assertEqual(res, self.parser.grammar(),
                          "It should return the grammar")
@@ -102,6 +102,7 @@ class TestPrivateParse(unittest.TestCase):
         new_tree, new_frontier = next(parse)
         self.assertListEqual(res, new_tree)
 
+
 class TestMatch(unittest.TestCase):
     """ Tests for TopDownParser()._match(tokens, tree, frontier)
     """
@@ -136,9 +137,7 @@ class TestMatch(unittest.TestCase):
 
 
 class TestExpand(unittest.TestCase):
-    """ Test parse._expand(tokens, tree, frontier)
-        Hence, multiple productions candidates are possible
-        That means the function can yield more than one (tree, frontier)
+    """ Tests for TopDownParser()._expand(tokens, tree, frontier)
     """
 
     def setUp(self):
@@ -158,11 +157,16 @@ class TestExpand(unittest.TestCase):
         with self.assertRaises(ValueError):
             next(self.parser._expand(self.tokens, tree, frontier))
 
+    def test_expand_with_empty_tokens(self):
+        tree = Tree("S", [])
+        frontier = [()]
+        self.tokens = []
+        with self.assertRaises(StopIteration):
+            next(self.parser._expand(self.tokens, tree, frontier))
+
     def test_expand_non_expandable(self):
-        """ It should return a StopIteration error """
         tree = Tree("NP", [Tree("D", ["'the'"]), Tree("N", [])])
         frontier = [(0, 0), (1, )]
-        parse = self.parser._expand(self.tokens, tree, frontier)
         with self.assertRaises(StopIteration):
             next(self.parser._expand(self.tokens, tree, frontier))
 

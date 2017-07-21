@@ -6,8 +6,8 @@
 """
 
 from nlp.tree import Tree, tree_from_production
-from nlp.grammar import Grammar, Production
 from nlp.tokenize import tokenize
+
 
 class TopDownParser(object):
 
@@ -56,12 +56,13 @@ class TopDownParser(object):
             pass
         elif isinstance(tree[frontier[0]], Tree):
             # Expand the tree at frontier
-            for (new_tree, new_frontier) in self._expand(tokens, tree, frontier):
+            for (new_tree, new_frontier) in self._expand(tokens, tree,
+                                                         frontier):
                 yield (new_tree, new_frontier)
         else:
             # This is a terminal, we will match it
             for (new_tree, new_frontier) in self._match(tokens, tree,
-                                                      frontier):
+                                                        frontier):
                 yield (new_tree, new_frontier)
 
     def _match(self, tokens, tree, frontier):
@@ -108,7 +109,7 @@ class TopDownParser(object):
                         newtree = tree.copy(deep=True)
                         newtree[frontier[0]] = subtree
                     newfrontier = [frontier[0] + (i, ) for i in
-                                    range(len(production.rhs()))]
+                                   range(len(production.rhs()))]
                     newfrontier = newfrontier + frontier[1:]
                     for new_tree, new_frontier in self._parse(tokens, newtree,
                                                               newfrontier):

@@ -3,6 +3,7 @@
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
+
 def tokenize(string):
     """ Basic implementation of tokenizing a string
         Given a string, returns a list containing all words of the string

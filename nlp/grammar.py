@@ -11,6 +11,7 @@
 
 import re
 
+
 class Production(object):
     # TODO: docstring for this
 
@@ -59,7 +60,6 @@ class Production(object):
         """
         return not self == other
 
-
     @classmethod
     def _parse_production(cls, line):
         """ Parse a grammar rule, given as a string
@@ -97,6 +97,7 @@ class Production(object):
                 rhsides[-1].append(m.group().strip())
         return [Production(lhs, rhs) for rhs in rhsides]
 
+
 class Grammar(object):
     """ A simple context-free grammar
     """
@@ -127,7 +128,6 @@ class Grammar(object):
                 lhs_index[lhs] = []
             lhs_index[lhs].append(prod)
         return lhs_index
-
 
     def start(self):
         """ Return the start of this ``production``
@@ -179,7 +179,8 @@ class Grammar(object):
         start = None
         for linenum, line in enumerate(lines):
             line = line.strip()
-            if line.startswith("#") or line=="": continue
+            if line.startswith("#") or line == "":
+                continue
             try:
                 production = Production._parse_production(line)
                 productions += production
@@ -190,9 +191,8 @@ class Grammar(object):
                                                                  line))
         return Grammar(start, productions)
 
-###############
-### Helpers ###
-###############
+
+# Helpers
 
 _NONTERMINAL_RE = re.compile(r'([\w][\w]*) \s*', re.VERBOSE)
 _ARROW_RE = re.compile(r'\s* -> \s*', re.VERBOSE)

@@ -8,6 +8,7 @@
 import unittest
 from nlp.tokenize import tokenize
 
+
 class TestTokenize(unittest.TestCase):
 
     def setUp(self):
@@ -24,13 +25,13 @@ class TestTokenize(unittest.TestCase):
     def test_returns_list_of_words(self):
         res = ["fall", "leaves", "fall"]
         self.assertEqual(res, tokenize(self.string),
-                        msg="It should return list of words")
+                         msg="It should return list of words")
 
     def test_removes_dot_at_end_of_sentence(self):
         res = ["fall", "leaves", "fall"]
         self.string += "."
         self.assertEqual(res, tokenize(self.string),
-                        msg="It should remove the dot")
+                         msg="It should remove the dot")
 
 
 if __name__ == "__main__":
