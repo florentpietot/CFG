@@ -46,11 +46,6 @@ class Tree(list):
                 string += ", "
                 string += "%s" % str(child)
         string += ")"
-        # if self._children:
-        #     for child in self._children:
-        #         string += ", "
-        #         string += "%s" % str(child)
-        # string += ")"
         return string
 
     def __repr__(self):
