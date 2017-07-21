@@ -53,20 +53,14 @@ class TestParse(unittest.TestCase):
         with self.assertRaises(StopIteration):
             next(self.parser.parse(tokens))
 
-    def test_one_parse(self):
-        """ Test when there is only one parse that will fit
-            the tokens
-        """
+    def test_syntactically_unambiguous(self):
         tokens = ["fall", "leaves"]
         res = Tree("S", [Tree("NP", [Tree("N", ["'fall'"])]),
                          Tree("VP", [Tree("V", ["'leaves'"])])])
         parse = self.parser.parse(tokens)
         self.assertEqual(res, next(parse)[0])
 
-    def test_multiple_parse(self):
-        """ Test when there is more than one possible parse
-            for the tokens given the grammar
-        """
+    def test_syntactically_ambiguous(self):
         tokens = ["fall", "leaves", "fall"]
         tree_1 = Tree("S",
                       [Tree("NP", [Tree("N", ["'fall'"])]),
