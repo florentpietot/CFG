@@ -5,7 +5,7 @@ A few months ago, I followed Udacity's [Intro to Artificial Intelligence](https:
 I realized I had forgotten to finish a couple of exercises in the final assignment. One of those exercises wasn't difficult to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and python's unittest module.
 
 ## Exercise
-
+Here is the exercise
 ![Grammar exercice from Udacity's intro to Artificial Intelligence](/screenshots/grammar-exercice.png?raw=true "Grammar exercice from Udacity's intro to artificial intelligence")
 
 ## How to use
