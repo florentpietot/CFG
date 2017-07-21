@@ -1,12 +1,11 @@
 # Basic Context-Free Grammar
 
-After following Udacity's Intro to Artificial Intelligence (by Peter Norvig and
-Sebastian Thrun) a few months ago: (https://www.udacity.com/course/intro-to-artificial-intelligence--cs271).
+A few months ago, I followed Udacity's [Intro to Artificial Intelligence](https://www.udacity.com/course/intro-to-artificial-intelligence--cs271) by Peter Norvig and Sebastian Thrun.
 
 I realized I had forgotten to finish a couple of exercises in the final assignment. One of those exercises wasn't difficult to solve "manually", but seemed like an interesting exercise to solve programmatically: good low-level introduction to NLP and python's unittest module.
 
 ## Exercise
-
+Here is the exercise
 ![Grammar exercice from Udacity's intro to Artificial Intelligence](/screenshots/grammar-exercice.png?raw=true "Grammar exercice from Udacity's intro to artificial intelligence")
 
 ## How to use
@@ -64,13 +63,12 @@ future developments.
 That was my first approach with python's unittest module. I feel like there is
 a lot of room for improvement here, maybe using a module like ``nose`` could help but I have a hunch there is already much more that could be done with proper usage of ``unittest``, like using decorators, subclassing, etc.. Any feedbacks are welcome.
 
-In particular, the functions used by the TopDownParser (parse, expand, match)
-are difficult to test in isolation given parse call both expand and match, and
-expand/match both call parse.
+In particular, the functions used by the TopDownParser (``_parse``, ``_expand``, ``_match``)
+are difficult to test in isolation given parse call both ``_expand`` and ``_match``, and
+``_expand``/``_match`` both are calling ``_parse``.
 What I'm interested in testing for each of those, is the next step in the
 recursion. E.g. for expand, what will be the next tree candidates for expansion
 that will then be sent for parsing.
-
 
 ## Feedback
 That was quite a good introduction to low-level NLP concepts for me. NLP is a
