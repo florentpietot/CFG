@@ -6,9 +6,9 @@
 """
 
 import unittest
-from nlp.tree import Tree
-from nlp.parse import TopDownParser
-from nlp.grammar import Grammar
+from cfg.tree import Tree
+from cfg.parse import TopDownParser
+from cfg.grammar import Grammar
 
 
 class TestTopDownParserInit(unittest.TestCase):

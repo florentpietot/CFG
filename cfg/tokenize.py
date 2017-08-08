@@ -3,7 +3,7 @@
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
 import sys
-from nlp.grammar import Grammar
+from cfg.grammar import Grammar
 
 
 def tokenize(string):

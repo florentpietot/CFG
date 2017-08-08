@@ -5,8 +5,8 @@
 """ Parse sentences using trees
 """
 
-from nlp.tree import Tree, tree_from_production
-from nlp.tokenize import tokenize
+from cfg.tree import Tree, tree_from_production
+from cfg.tokenize import tokenize
 
 
 class TopDownParser(object):

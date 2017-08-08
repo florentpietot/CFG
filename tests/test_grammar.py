@@ -7,7 +7,7 @@
 
 import unittest
 import copy
-from nlp.grammar import Production, Grammar
+from cfg.grammar import Production, Grammar
 
 
 class TestProduction(unittest.TestCase):

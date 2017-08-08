@@ -2,9 +2,9 @@
 #
 # Author: Florent Piétot <florent.pietot@gmail.com>
 
-from nlp.grammar import Grammar
-from nlp.parse import TopDownParser
-from nlp.tokenize import tokenize
+from cfg.grammar import Grammar
+from cfg.parse import TopDownParser
+from cfg.tokenize import tokenize
 
 if __name__ == "__main__":
 

@@ -6,8 +6,8 @@
 """
 
 import unittest
-from nlp.tree import (Tree, tree_from_production)
-from nlp.grammar import Production
+from cfg.tree import (Tree, tree_from_production)
+from cfg.grammar import Production
 
 
 class TestTree(unittest.TestCase):
