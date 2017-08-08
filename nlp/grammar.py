@@ -60,8 +60,8 @@ class Production(object):
         """
         return not self == other
 
-    @classmethod
-    def _parse_production(cls, line):
+    @staticmethod
+    def _parse_production(line):
         """ Parse a grammar rule, given as a string
             and returns a list of production
         """
@@ -163,8 +163,8 @@ class Grammar(object):
         # Filter on left-hand side
         return list(filter(lambda x: lhs == x._lhs, self._productions))
 
-    @classmethod
-    def parse_grammar(cls, input):
+    @staticmethod
+    def parse_grammar(input):
         """ Read a grammar given as a string
         Args:
             input as a string
