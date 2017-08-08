@@ -157,9 +157,6 @@ class Grammar(object):
         if not lhs:
             return self._productions
 
-        # TODO: clean this if not needed
-        # return self._lhs_index[lhs]
-
         # Filter on left-hand side
         return list(filter(lambda x: lhs == x._lhs, self._productions))
 
