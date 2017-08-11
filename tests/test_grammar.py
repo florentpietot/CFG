@@ -56,7 +56,7 @@ class TestParseProduction(unittest.TestCase):
 
     def test_return_array(self):
         """ Make sure it returns an array """
-        self.assertIsInstance(Production._parse_production(self.line),
+        self.assertIsInstance(Production.parse_production(self.line),
                               list)
 
     def test_parse(self):
@@ -67,7 +67,7 @@ class TestParseProduction(unittest.TestCase):
             Production("Adj", ["'purple'"]),
             Production("Adj", ["'left'"])
         ]
-        self.assertEqual(res, Production._parse_production(self.line))
+        self.assertEqual(res, Production.parse_production(self.line))
 
 
 class TestGrammar(unittest.TestCase):
