@@ -9,6 +9,7 @@ import unittest
 from cfg.tree import Tree
 from cfg.parse import TopDownParser
 from cfg.grammar import Grammar
+from tests.utils import expect_exception
 
 
 class TestTopDownParserInit(unittest.TestCase):
@@ -45,13 +46,13 @@ class TestParse(unittest.TestCase):
         grammar = Grammar.parse_grammar(grammar_as_string)
         self.parser = TopDownParser(grammar)
 
+    @expect_exception(StopIteration)
     def test_non_parsable(self):
         """ Test when the list of tokens cannot find a parse
             for this grammar
         """
         tokens = ["hello", "world"]
-        with self.assertRaises(StopIteration):
-            next(self.parser.parse(tokens))
+        next(self.parser.parse(tokens))
 
     def test_syntactically_unambiguous(self):
         tokens = ["fall", "leaves"]
