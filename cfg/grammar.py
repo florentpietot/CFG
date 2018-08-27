@@ -11,6 +11,11 @@
 
 import re
 
+_NONTERMINAL_RE = re.compile(r'([\w][\w]*) \s*', re.VERBOSE)
+_ARROW_RE = re.compile(r'\s* -> \s*', re.VERBOSE)
+_DISJUNCTION_RE = re.compile(r'\| \s*', re.VERBOSE)
+_TERMINAL_RE = re.compile(r'(\'\w+\') \s*', re.VERBOSE)
+
 
 class Production(object):
     # TODO: docstring for this
@@ -61,7 +66,7 @@ class Production(object):
         return not self == other
 
     @staticmethod
-    def _parse_production(line):
+    def parse_production(line):
         """ Parse a grammar rule, given as a string
             and returns a list of production
         """
@@ -157,9 +162,6 @@ class Grammar(object):
         if not lhs:
             return self._productions
 
-        # TODO: clean this if not needed
-        # return self._lhs_index[lhs]
-
         # Filter on left-hand side
         return list(filter(lambda x: lhs == x._lhs, self._productions))
 
@@ -173,7 +175,7 @@ class Grammar(object):
         Raises:
             TypeError if input is not a string
         """
-        assert isinstance(input, str)
+        assert isinstance(input, str), "Input should be a string"
         lines = input.split('\n')
         productions = []
         start = None
@@ -182,7 +184,7 @@ class Grammar(object):
             if line.startswith("#") or line == "":
                 continue
             try:
-                production = Production._parse_production(line)
+                production = Production.parse_production(line)
                 productions += production
                 if start is None and len(production) > 0:
                     start = production[0].lhs()
@@ -193,8 +195,3 @@ class Grammar(object):
 
 
 # Helpers
-
-_NONTERMINAL_RE = re.compile(r'([\w][\w]*) \s*', re.VERBOSE)
-_ARROW_RE = re.compile(r'\s* -> \s*', re.VERBOSE)
-_DISJUNCTION_RE = re.compile(r'\| \s*', re.VERBOSE)
-_TERMINAL_RE = re.compile(r'(\'\w+\') \s*', re.VERBOSE)

@@ -6,7 +6,7 @@
 """
 
 import copy
-from nlp.tokenize import tokenize
+from cfg.tokenize import tokenize
 
 
 class Tree(list):

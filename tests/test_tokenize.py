@@ -6,7 +6,7 @@
 """
 
 import unittest
-from nlp.tokenize import tokenize
+from cfg.tokenize import tokenize
 
 
 class TestTokenize(unittest.TestCase):
