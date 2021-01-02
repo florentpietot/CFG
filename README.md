@@ -16,7 +16,7 @@ form.
 Example of a grammar as a string form:
     
     grammar_as_string = """
-    S -> NP VP,\n
+    S -> NP VP,
     NP -> N | D N,
     VP -> V | V NP,
     N -> 'fall' | 'leaves' | 'spring',
